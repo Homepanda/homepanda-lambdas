@@ -1,0 +1,39 @@
+version: 0.2
+
+env:
+  variables:
+    PLAN: "true"
+    DEPLOY_CONFIRMED: "false"
+
+phases:
+  install:
+    commands:
+      - |
+        set -eu
+        command -v aws
+        command -v python3
+        command -v sha256sum
+        command -v bash
+        aws --version
+
+  pre_build:
+    commands:
+      - |
+        set -eu
+        if [ -z "${BUILD_ARTIFACT_DIR:-}" ]; then
+          echo "BUILD_ARTIFACT_DIR è obbligatorio e deve puntare all'input secondario BuildArtifact." >&2
+          exit 1
+        fi
+        test -f "$BUILD_ARTIFACT_DIR/release-manifest.json"
+        test -f "$CODEBUILD_SRC_DIR/scripts/deploy-release.sh"
+
+  build:
+    commands:
+      - |
+        set -eu
+        export BUILD_ARTIFACT_DIR
+        bash "$CODEBUILD_SRC_DIR/scripts/deploy-release.sh" "$BUILD_ARTIFACT_DIR"
+
+artifacts:
+  files:
+    - deploy-plan.json

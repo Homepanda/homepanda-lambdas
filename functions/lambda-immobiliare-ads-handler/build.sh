@@ -268,6 +268,8 @@ manifest = {
     "functionName": os.environ["FUNCTION_NAME"],
     "accountId": os.environ["FUNCTION_ACCOUNT_ID"],
     "region": os.environ["FUNCTION_REGION"],
+    "packageType": os.environ["FUNCTION_PACKAGE_TYPE"],
+    "handler": "index.handler",
     "commit": commit,
     "runtime": os.environ["FUNCTION_RUNTIME"],
     "architecture": os.environ["FUNCTION_ARCH"],
