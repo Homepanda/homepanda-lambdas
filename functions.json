@@ -1,0 +1,24 @@
+{
+  "functions": [
+    {
+      "logicalName": "immobiliare-ads-handler",
+      "directory": "functions/immobiliare/lambda-immobiliare-ads-handler",
+      "packageType": "Zip",
+      "runtime": "nodejs22.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "zipRoot": "src",
+      "aws": {
+        "functionName": "lambda-immobiliare-ads-handler",
+        "accountId": "247981707334",
+        "region": "eu-central-1"
+      },
+      "environmentVariableNames": [
+        "HOMEPANDA_PROPERTY_SERVICE_URL",
+        "IMMOBILIARE_AGENCY_HP",
+        "IMMOBILIARE_AGENCY_RLB",
+        "IMMOBILIARE_AUTHORIZATION"
+      ]
+    }
+  ]
+}

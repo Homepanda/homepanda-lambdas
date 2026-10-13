@@ -1,0 +1,74 @@
+{
+  "scope": "partial",
+  "note": "Solo lambda-immobiliare-ads-handler. Non è l'inventario delle 30 funzioni.",
+  "collectedAt": "2026-10-13",
+  "accountId": "247981707334",
+  "region": "eu-central-1",
+  "functions": [
+    {
+      "functionName": "lambda-immobiliare-ads-handler",
+      "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-ads-handler",
+      "packageType": "Zip",
+      "runtime": "nodejs22.x",
+      "handler": "index.handler",
+      "architectures": ["x86_64"],
+      "memorySize": 128,
+      "timeout": 30,
+      "ephemeralStorage": 512,
+      "codeSize": 3253460,
+      "codeSha256": "TBbIN+yfQqPFi70Cviy0ZvJL2CDQJAgBrKB/X24hx10=",
+      "description": "",
+      "role": "arn:aws:iam::247981707334:role/service-role/lambda-immobiliare-ads-handler-role-k2khi5zh",
+      "layers": [],
+      "vpc": {
+        "vpcId": "vpc-0b801a60",
+        "subnetIds": [
+          "subnet-02ba6eb4500fa4c78",
+          "subnet-077fbce99f0eb5349",
+          "subnet-06a1113fbe3c45115"
+        ],
+        "securityGroupIds": ["sg-06bbc76b"]
+      },
+      "reservedConcurrency": null,
+      "version": "$LATEST",
+      "publishedVersionCount": 50,
+      "aliases": [],
+      "revisionId": "f63a7a52-a955-4bf9-92ab-da0e343d57f0",
+      "lastModified": "2026-10-12T13:25:05.000+0000",
+      "state": "Active",
+      "lastUpdateStatus": "Successful",
+      "environmentVariableNames": [
+        "HOMEPANDA_PROPERTY_SERVICE_URL",
+        "IMMOBILIARE_AGENCY_HP",
+        "IMMOBILIARE_AGENCY_RLB",
+        "IMMOBILIARE_AUTHORIZATION"
+      ],
+      "eventSourceMappings": [
+        {
+          "uuid": "316bd373-b73c-40c3-be3f-1cb493c1898c",
+          "state": "Enabled",
+          "eventSourceArn": "arn:aws:sqs:eu-central-1:247981707334:ImmobiliareAds",
+          "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-ads-handler",
+          "batchSize": 1,
+          "maximumBatchingWindowInSeconds": 0,
+          "invocationTarget": "$LATEST"
+        }
+      ],
+      "resourcePolicy": null,
+      "eventInvokeConfig": null,
+      "logGroup": {
+        "name": "/aws/lambda/lambda-immobiliare-ads-handler",
+        "retentionInDays": null
+      },
+      "tags": {},
+      "tracingMode": "PassThrough",
+      "snapStart": "None"
+    }
+  ],
+  "unverified": [
+    "Trigger esterni oltre l'event source mapping SQS (EventBridge, API Gateway, SNS, S3) non cercati.",
+    "Contenuto della coda ImmobiliareAds e dei suoi producer non verificato.",
+    "Policy IAM del ruolo di esecuzione non letta.",
+    "Confronto tra yarn install locale e CodeSha256 del pacchetto distribuito non eseguito."
+  ]
+}

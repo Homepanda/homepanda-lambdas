@@ -1,0 +1,9 @@
+# Domande aperte
+
+1. Il branch di lavoro su `Homepanda/homepanda-lambdas` è `main`? Il remoto `origin/main` non esiste in questo clone.
+2. La cartella CommonJS in `project/lambda-immobiliare-ads-handler` va ignorata, o va conservata come storico a parte?
+3. `IMMOBILIARE_AGENCY_HP` e `IMMOBILIARE_AGENCY_RLB` sono sulla funzione ma non nel sorgente recuperato. Sono residue o usate da un percorso non presente nello zip?
+4. Quando si potrà costruire lo zip e confrontare il `CodeSha256` con `TBbIN+yfQqPFi70Cviy0ZvJL2CDQJAgBrKB/X24hx10=`?
+5. Il pacchetto in AWS non fa il parse. Si pubblica la correzione locale di `generateXml.mjs`, oppure si lascia la funzione com'è finché non si decide il pilota di deploy?
+6. Questa funzione è il pilota di deploy, o l'impostazione si ferma al sorgente finché non si sceglie un'altra funzione meno critica?
+7. Si autorizza più avanti l'inventario in sola lettura delle altre funzioni nello stesso account e nella stessa regione?
