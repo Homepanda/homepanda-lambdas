@@ -4,20 +4,23 @@ Ambito attuale: una sola funzione, `lambda-immobiliare-ads-handler`. Nessuna pip
 
 ## Repository
 
-La radice di `homepanda-lambdas` è il monorepo. Non si aggiunge un ulteriore livello `lambda-functions/`. I domini sono cartelle. La prima è `immobiliare`.
+La radice di `homepanda-lambdas` è il monorepo. Non si aggiunge un ulteriore livello `lambda-functions/`.
 
 ```text
-functions/immobiliare/lambda-immobiliare-ads-handler/
+buildspec.yml
+scripts/build-selected.sh
+functions.json
+functions/lambda-immobiliare-ads-handler/
+  build.sh
   src/          radice del pacchetto Zip
   tests/
-  package.json
-  yarn.lock
-functions.json
-inventory/functions.sanitized.json
-docs/
 ```
 
-`functions.json` mappa nome logico, cartella, funzione AWS, account, regione e tipo di pacchetto. Non contiene valori di ambiente.
+`functions.json` separa `logicalName` e `functionName`. Il nome AWS, l'account e la regione stanno nel manifest e non si deducono dalla cartella. Non contiene valori di ambiente.
+
+## Build
+
+Un solo `buildspec.yml` in radice, senza `runtime-versions`. `BUILD_TARGETS` è obbligatorio. `scripts/build-selected.sh` rifiuta target vuoti, sconosciuti e `arm64`, e non installa dipendenze. La ricetta Node.js 22.14.0 con Yarn Classic 1.22.22 vive solo in `functions/lambda-immobiliare-ads-handler/build.sh`. Il pin non vale per le altre funzioni. Python e container non sono implementati.
 
 ## Codice di questa funzione
 
@@ -25,7 +28,7 @@ Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-10-12. La
 
 `package.json` resta quello del pacchetto: nessuna chiave `type`, nessun cambio di dipendenze. Il runtime resta `nodejs22.x`, l'handler `index.handler`, l'architettura `x86_64`.
 
-`node_modules` non entra in Git. Lo zip di deploy, quando verrà costruito, dovrà avere `index.mjs` e `helper/` alla radice, come oggi.
+`node_modules` non entra in Git. Lo zip di build ha `index.mjs` e `helper/` alla radice. Il deploy non è stato eseguito.
 
 Non esiste codice condiviso con altre funzioni, quindi `shared/` non è stato creato.
 

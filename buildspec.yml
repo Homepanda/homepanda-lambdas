@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - |
+        set -eu
+        for tool in bash curl tar zip unzip sha256sum python3; do
+          command -v "$tool"
+        done
+
+  build:
+    commands:
+      - |
+        set -eu
+        bash scripts/build-selected.sh
+
+artifacts:
+  base-directory: dist
+  files:
+    - '*.zip'
+    - release-manifest.json

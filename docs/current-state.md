@@ -53,7 +53,7 @@ Variabili d'ambiente presenti, solo nomi: `HOMEPANDA_PROPERTY_SERVICE_URL`, `IMM
 
 ## Verifica locale
 
-`node --test functions/immobiliare/lambda-immobiliare-ads-handler/tests/handler.test.mjs` con Node v22.14.0: 1 test passato. Copre solo l'azione sconosciuta, che esce prima di Immobiliare e del webhook Homepanda. Non è uno smoke test sulla funzione AWS.
+`node --test functions/lambda-immobiliare-ads-handler/tests/handler.test.mjs` con Node v22.14.0: 1 test passato. Copre solo l'azione sconosciuta, che esce prima di Immobiliare e del webhook Homepanda. Non è uno smoke test sulla funzione AWS.
 
 ## Cosa non è stato verificato
 
