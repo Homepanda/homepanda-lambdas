@@ -20,18 +20,15 @@ phases:
     commands:
       - |
         set -eu
-
-        # Deve coincidere esattamente con il nome dell'output artifact
-        # dello stage Build in CodePipeline: BuildArtifact.
+        unset BUILD_ARTIFACT_DIR
         export BUILD_ARTIFACT_DIR="${CODEBUILD_SRC_DIR_BuildArtifact:-}"
-
         if [ -z "$BUILD_ARTIFACT_DIR" ]; then
           echo "Input secondario BuildArtifact non trovato." >&2
           echo "Atteso: CODEBUILD_SRC_DIR_BuildArtifact" >&2
           env | sort | grep '^CODEBUILD_SRC_DIR' || true
           exit 1
         fi
-
+        test -d "$CODEBUILD_SRC_DIR"
         test -f "$BUILD_ARTIFACT_DIR/release-manifest.json"
         test -f "$CODEBUILD_SRC_DIR/scripts/deploy-release.sh"
 

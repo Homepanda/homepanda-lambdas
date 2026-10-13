@@ -17,32 +17,35 @@ interrupt() {
   exit 1
 }
 
-if [[ $# -eq 1 ]]; then
+if [[ -z "${CODEBUILD_SRC_DIR:-}" ]]; then
+  interrupt "CODEBUILD_SRC_DIR è obbligatorio. deploy-plan.json si scrive solo lì."
+fi
+
+if [[ $# -eq 1 && -n "${1:-}" ]]; then
   BUILD_ARTIFACT_DIR=$1
-elif [[ -n "${BUILD_ARTIFACT_DIR:-}" ]]; then
-  :
+elif [[ -n "${CODEBUILD_SRC_DIR_BuildArtifact:-}" ]]; then
+  BUILD_ARTIFACT_DIR=$CODEBUILD_SRC_DIR_BuildArtifact
 else
-  interrupt "passare BUILD_ARTIFACT_DIR come argomento o variabile d'ambiente."
+  interrupt "directory BuildArtifact assente. Usare CODEBUILD_SRC_DIR_BuildArtifact, non una variabile di pipeline."
 fi
 
 if [[ -z "$BUILD_ARTIFACT_DIR" ]]; then
   interrupt "BUILD_ARTIFACT_DIR è vuoto."
 fi
 
-source_root=${CODEBUILD_SRC_DIR:-}
-if [[ -n "$source_root" ]]; then
-  artifact_resolved=$(cd "$BUILD_ARTIFACT_DIR" && pwd)
-  source_resolved=$(cd "$source_root" && pwd)
-  if [[ "$artifact_resolved" == "$source_resolved" ]]; then
-    interrupt "BUILD_ARTIFACT_DIR coincide con SourceArtifact. ZIP e manifesto vanno letti da BuildArtifact."
-  fi
+artifact_resolved=$(cd "$BUILD_ARTIFACT_DIR" && pwd)
+source_resolved=$(cd "$CODEBUILD_SRC_DIR" && pwd)
+if [[ "$artifact_resolved" == "$source_resolved" ]]; then
+  interrupt "BUILD_ARTIFACT_DIR coincide con SourceArtifact. ZIP e manifesto vanno letti da BuildArtifact."
 fi
 
 manifest_path=$BUILD_ARTIFACT_DIR/release-manifest.json
 [[ -f "$manifest_path" ]] || interrupt "manca $manifest_path"
 
-plan_path=${CODEBUILD_SRC_DIR:-.}/deploy-plan.json
-mkdir -p "$(dirname "$plan_path")"
+plan_path=$CODEBUILD_SRC_DIR/deploy-plan.json
+if [[ "$plan_path" == "$artifact_resolved"/* ]]; then
+  interrupt "deploy-plan.json non deve essere scritto in BuildArtifact."
+fi
 
 eval "$(python3 - "$manifest_path" "$BUILD_ARTIFACT_DIR" "$PILOT_LOGICAL_NAME" \
   "$PILOT_FUNCTION_NAME" "$PILOT_ACCOUNT_ID" "$PILOT_REGION" "$PILOT_RUNTIME" \
