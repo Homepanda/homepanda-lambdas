@@ -212,6 +212,7 @@ export default class Immobiliare {
         return null;
       }
       let page = 0;
+      let messagesId = [];
       let contactFind = [];
       do {
         page += 1;
