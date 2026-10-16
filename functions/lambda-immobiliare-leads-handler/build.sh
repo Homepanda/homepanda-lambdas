@@ -20,7 +20,7 @@ set -euo pipefail
 
 if [[ "$FUNCTION_LOGICAL_NAME" != "immobiliare-leads-handler" \
   || "$FUNCTION_NAME" != "lambda-immobiliare-leads-handler" \
-  || "$FUNCTION_RUNTIME" != "nodejs20.x" \
+  || "$FUNCTION_RUNTIME" != "nodejs24.x" \
   || "$FUNCTION_ARCH" != "x86_64" \
   || "$FUNCTION_PACKAGE_TYPE" != "Zip" \
   || "$FUNCTION_ACCOUNT_ID" != "247981707334" \
@@ -87,7 +87,7 @@ if grep -q '"packageManager"[[:space:]]*:[[:space:]]*"yarn@[234]' "$stage/packag
   exit 1
 fi
 
-NODE_SHA256=19e56f0825510207dd904f087fe52faa0a4eb6b2aab5f0ea7a33830d04888b8b
+NODE_SHA256=b3c071cdf47aab867c3b2aa287257df12ec5d7c962bf922b32fd33226c4295fd
 NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz"
 YARN_URL="https://registry.npmjs.org/yarn/-/yarn-${YARN_VERSION}.tgz"
 YARN_SHA512=prL3kGtyG7o9Z9Sv8IPfBNrWTDmXB4Qbes8A9rEzt6wkJV8mUvoirjU0Mp3GGAU06Y0XQyA3/2/RQFVuK7MTfg==

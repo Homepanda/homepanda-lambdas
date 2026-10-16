@@ -24,7 +24,7 @@ functions/lambda-immobiliare-leads-handler/
 
 ## Build
 
-Un solo `buildspec.yml` in radice, senza `runtime-versions`. La build legge `release-targets.json` dello stage Plan; `BUILD_TARGETS` resta solo override manuale. Ogni funzione ha la propria ricetta in `build.sh` (Node 22.14.0 per ads, Node 20.20.2 per leads, Yarn Classic 1.22.22). I pin non sono condivisi. Python e container non sono implementati. Più target producono zip distinti e `dist/release-manifest.json` con `releases[]`.
+Un solo `buildspec.yml` in radice, senza `runtime-versions`. La build legge `release-targets.json` dello stage Plan; `BUILD_TARGETS` resta solo override manuale. Ogni funzione ha la propria ricetta in `build.sh` (Node 22.14.0 per ads, Node 24.11.0 per leads, Yarn Classic 1.22.22). I pin non sono condivisi. Python e container non sono implementati. Più target producono zip distinti e `dist/release-manifest.json` con `releases[]`.
 
 ## Codice di questa funzione
 
@@ -40,7 +40,7 @@ Non esiste codice condiviso con altre funzioni, quindi `shared/` non è stato cr
 
 Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-09-15. `CodeSha256` letto da AWS, `TdcjKCUN3uNeoEniicm9wVnfM39JcauKmwF9alYw5PE=`, coincide con lo zip scaricato. La cartella in `project/lambda-immobiliare-leads-handler` non è la copia in esecuzione: `package.json` e `yarn.lock` coincidono, `index.mjs` e `services/` no. Non viene importata.
 
-`package.json` resta quello del pacchetto: nessuna chiave `type`, nessun cambio di dipendenze. Il runtime resta `nodejs20.x`, l'handler `index.handler`, l'architettura `x86_64`.
+`package.json` resta quello del pacchetto: nessuna chiave `type`, nessun cambio di dipendenze. Il runtime atteso è `nodejs24.x`, l'handler `index.handler`, l'architettura `x86_64`.
 
 `node_modules` non entra in Git. Lo zip di build ha `index.mjs` e `services/` alla radice.
 
