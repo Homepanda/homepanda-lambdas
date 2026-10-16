@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Ricetta del solo immobiliare-leads-handler.
-# Node 20.20.2 è il pin di build di questa funzione, non la patch del runtime Lambda.
+# Node 24.11.0 è il pin di build di questa funzione, non la patch del runtime Lambda.
 set -euo pipefail
 
 : "${FUNCTION_LOGICAL_NAME:?}"
@@ -27,7 +27,7 @@ if [[ "$FUNCTION_LOGICAL_NAME" != "immobiliare-leads-handler" \
   || "$FUNCTION_REGION" != "eu-central-1" \
   || "$FUNCTION_STRATEGY" != "nodejs-zip-yarn-classic" \
   || "$FUNCTION_ARTIFACT" != "immobiliare-leads-handler.zip" \
-  || "$NODE_VERSION" != "20.20.2" \
+  || "$NODE_VERSION" != "24.11.0" \
   || "$YARN_VERSION" != "1.22.22" ]]; then
   echo "Questa ricetta è solo per immobiliare-leads-handler." >&2
   exit 1

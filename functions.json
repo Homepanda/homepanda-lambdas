@@ -36,7 +36,7 @@
       "functionName": "lambda-immobiliare-leads-handler",
       "directory": "functions/lambda-immobiliare-leads-handler",
       "packageType": "Zip",
-      "runtime": "nodejs20.x",
+      "runtime": "nodejs24.x",
       "handler": "index.handler",
       "architecture": "x86_64",
       "accountId": "247981707334",
@@ -48,7 +48,7 @@
         "artifact": "immobiliare-leads-handler.zip",
         "toolchain": {
           "language": "nodejs",
-          "version": "20.20.2",
+          "version": "24.11.0",
           "packageManager": "yarn-classic",
           "packageManagerVersion": "1.22.22",
           "pinScope": "function"
