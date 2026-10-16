@@ -211,7 +211,8 @@ export default class Immobiliare {
         console.log(`Email not found in message`);
         return null;
       }
-      let page = 0;      
+      let page = 0;
+      let contactFind = [];
       do {
         page += 1;
         try {
