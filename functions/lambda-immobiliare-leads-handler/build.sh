@@ -228,8 +228,8 @@ if missing or prefixed or unexpected:
     sys.exit(1)
 PY
 
-mkdir -p "$DIST_DIR"
-rm -f "$DIST_DIR/$FUNCTION_ARTIFACT" "$DIST_DIR/release-manifest.json"
+mkdir -p "$DIST_DIR/manifests"
+rm -f "$DIST_DIR/$FUNCTION_ARTIFACT"
 mv "$toolchain/package.zip" "$DIST_DIR/$FUNCTION_ARTIFACT"
 zip_sha=$(sha256sum "$DIST_DIR/$FUNCTION_ARTIFACT" | awk '{print $1}')
 
@@ -273,7 +273,7 @@ manifest = {
         "functionalTest": False,
     },
 }
-destination = Path(os.environ["DIST_DIR"]) / "release-manifest.json"
+destination = Path(os.environ["DIST_DIR"]) / "manifests" / (os.environ["FUNCTION_LOGICAL_NAME"] + ".json")
 destination.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 PY
 

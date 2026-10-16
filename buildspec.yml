@@ -13,6 +13,9 @@ phases:
     commands:
       - |
         set -eu
+        if [ -n "${CODEBUILD_SRC_DIR_PlanArtifact:-}" ]; then
+          export RELEASE_TARGETS_FILE="$CODEBUILD_SRC_DIR_PlanArtifact/release-targets.json"
+        fi
         bash scripts/build-selected.sh
 
 artifacts:
@@ -20,3 +23,4 @@ artifacts:
   files:
     - '*.zip'
     - release-manifest.json
+    - manifests/*.json

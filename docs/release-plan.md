@@ -1,6 +1,8 @@
 # Pianificazione del rilascio
 
-Questo documento descrive lo stage Plan. Non crea risorse AWS e non modifica la pipeline.
+Questo documento descrive Plan, Build e Deploy. Non crea risorse AWS e non modifica la pipeline.
+
+Non esiste un pilota. Entra in `targets` ogni funzione la cui cartella sotto `functions/` è dichiarata in `functions.json` e risulta nuova o modificata rispetto allo stato S3.
 
 ## Source CodeConnections
 
@@ -14,7 +16,7 @@ Da impostare sulla source action CodeConnections (modifica **non applicata** in 
 
 Senza la storia Git, `git merge-base --is-ancestor` e `git diff` tra commit di stato e HEAD non sono affidabili.
 
-Flusso previsto, da aggiungere in un passo successivo:
+Flusso previsto:
 
 ```text
 Source (full clone)
@@ -24,11 +26,11 @@ Source (full clone)
   -> Deploy (buildspec-deploy.yml)
 ```
 
-In questa fase `scripts/build-selected.sh` continua a richiedere `BUILD_TARGETS`. Lo stage Plan **non** legge `BUILD_TARGETS`.
+Lo stage Plan **non** legge `BUILD_TARGETS`. La build usa `release-targets.json`; `BUILD_TARGETS` è solo un override se il file del piano manca.
 
-## Variabili del progetto Plan
+## Variabili del progetto Plan e Deploy
 
-Gli script non contengono account, bucket o regione. Il progetto CodeBuild Plan deve definire:
+Gli script non contengono account, bucket o regione. I progetti CodeBuild Plan e Deploy devono definire:
 
 | Variabile | Significato |
 | --- | --- |
@@ -37,7 +39,7 @@ Gli script non contengono account, bucket o regione. Il progetto CodeBuild Plan 
 | `RELEASE_STATE_BUCKET` | bucket dello stato |
 | `RELEASE_STATE_KEY` | chiave dell’oggetto JSON |
 
-Valori attesi in produzione, da configurare sul progetto e non da copiare negli script:
+Valori attesi in produzione, da configurare sui progetti e non da copiare negli script:
 
 - account `247981707334`
 - regione `eu-central-1`
@@ -46,7 +48,7 @@ Valori attesi in produzione, da configurare sul progetto e non da copiare negli 
 
 ## Stato S3
 
-Oggetto di sola lettura per il Plan. Schema:
+Schema:
 
 ```json
 {
@@ -54,20 +56,22 @@ Oggetto di sola lettura per il Plan. Schema:
   "functions": {
     "immobiliare-ads-handler": {
       "functionName": "lambda-immobiliare-ads-handler",
-      "commit": "<sha40 o sha64 del commit dell'ultimo deploy riuscito>"
+      "commit": "<sha del commit dell'ultimo deploy riuscito>"
     }
   }
 }
 ```
 
-La chiave in `functions` è il `logicalName`. La scrittura di questo oggetto dopo un deploy riuscito **non** è implementata qui.
+La chiave in `functions` è il `logicalName`. Il Plan fa solo `GetObject`. Il Deploy, dopo `update-function-code` riuscito, fa merge e `PutObject` solo per i target andati a buon fine.
 
-Comportamento:
+Comportamento del Plan:
 
-- oggetto assente: tutte le funzioni `unmanaged`, `targets=[]`, exit 0
+- oggetto assente: tutte le funzioni in `functions.json` in `targets` (primo rilascio), exit 0
+- funzione in catalogo senza voce di stato: inclusa (primo rilascio di quella cartella)
 - JSON non valido, `version` diversa da 1, `functions` non oggetto, `logicalName` sconosciuto, SHA vuoto o `functionName` diverso da `functions.json`: `status=blocked`, report scritti, exit 1
+- sottocartella di `functions/` assente da `functions.json`: `orphan`, non nei target
 
-Una funzione senza voce di stato non entra nel piano. Resta unmanaged fino a un primo deploy esplicito.
+`functions.json` non è un path bloccante.
 
 ## Confronto Git
 
@@ -75,9 +79,9 @@ Per ogni funzione con stato valido:
 
 1. il commit di stato deve esistere nel clone;
 2. `git merge-base --is-ancestor <commit-stato> <HEAD>` deve riuscire;
-3. si confronta **tutta** la `directory` dichiarata in `functions.json`, non solo `src/`. Entrano `build.sh`, Dockerfile, lockfile, manifest, `src/` e ogni altro file della cartella.
+3. si confronta **tutta** la `directory` dichiarata in `functions.json`, non solo `src/`.
 
-Se il commit di stato non è antenato di HEAD, il target è `incomparable`, non viene incluso, non si esegue un diff ambiguo.
+Se il commit di stato non è antenato di HEAD, il target è `incomparable`, non viene incluso.
 
 ## Path che bloccano la selezione automatica
 
@@ -87,25 +91,40 @@ Se il diff tra un commit di stato antenato e HEAD tocca uno di questi path, il p
 - `scripts/`
 - `buildspec.yml`
 - `buildspec-plan.yml`
-- `functions.json`
 - `buildspec-deploy.yml`
 - `infra/`, `iam/`, `.github/`, `pipelines/`, `cloudformation/`, `terraform/` se presenti
 
-Serve allora una selezione manuale. Non si costruisce nessun target in automatico.
+Se esiste stato ma nessun commit di stato è antenato di HEAD, il piano è `blocked`.
 
-Se esiste stato ma nessun commit di stato è antenato di HEAD, il piano è `blocked` perché il diff globale sarebbe ambiguo.
+## Artefatti Plan
 
-## Artefatti
+Sempre scritti in `$CODEBUILD_SRC_DIR`:
 
-Sempre scritti in `$CODEBUILD_SRC_DIR`, anche per piano vuoto, stato assente, stato malformato o blocco:
+- `release-targets.json`
+- `release-plan.json`
+- `release-plan.txt`
 
-- `release-targets.json` — solo i `logicalName` da costruire (`targets` può essere `[]`)
-- `release-plan.json` — classificazione completa
-- `release-plan.txt` — report testuale
+## Artefatti Build
 
-## IAM previsto per il ruolo Plan (non creato)
+- `dist/<artifact>.zip` per ogni target
+- `dist/manifests/<logicalName>.json`
+- `dist/release-manifest.json` con `{ "releases": [ ... ] }`
+
+## Deploy
+
+`scripts/deploy-release.sh` legge `releases[]` da BuildArtifact. Per ogni release verifica la funzione live (PackageType, runtime, architettura, handler, account, regione) usando i campi di **quel** manifesto, poi `update-function-code --no-publish --revision-id`. Default `PLAN=true`. Scritture Lambda e S3 solo con `DEPLOY_CONFIRMED=true`. Un fallimento ferma il resto; lo stato S3 registra solo i successi precedenti. Nessun rollback automatico.
+
+## IAM previsto (non creato)
+
+Ruolo Plan:
 
 - `sts:GetCallerIdentity`
 - `s3:GetObject` sull’oggetto di stato
 
-Niente `s3:PutObject`, niente `lambda:UpdateFunctionCode`. I ruoli Build e Deploy non ricevono questi permessi in questo passo.
+Ruolo Deploy:
+
+- `sts:GetCallerIdentity`
+- `lambda:GetFunction`, `lambda:GetFunctionConfiguration`, `lambda:UpdateFunctionCode` sugli ARN delle funzioni in catalogo
+- `s3:GetObject` e `s3:PutObject` sull’oggetto di stato
+
+Questi permessi non vanno sul ruolo Build.

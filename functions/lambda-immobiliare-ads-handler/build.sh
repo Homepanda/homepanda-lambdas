@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Ricetta del solo pilota immobiliare-ads-handler.
+# Ricetta del solo immobiliare-ads-handler.
 # Node 22.14.0 è il pin iniziale di questa funzione, non una politica per le altre.
 set -euo pipefail
 
@@ -29,7 +29,7 @@ if [[ "$FUNCTION_LOGICAL_NAME" != "immobiliare-ads-handler" \
   || "$FUNCTION_ARTIFACT" != "immobiliare-ads-handler.zip" \
   || "$NODE_VERSION" != "22.14.0" \
   || "$YARN_VERSION" != "1.22.22" ]]; then
-  echo "Questa ricetta è solo per il pilota immobiliare-ads-handler." >&2
+  echo "Questa ricetta è solo per immobiliare-ads-handler." >&2
   exit 1
 fi
 
@@ -135,7 +135,7 @@ if [[ "$node_version" != "v${NODE_VERSION}" || -z "$npm_version" ]]; then
   echo "Versione Node o npm inattesa: node=${node_version} npm=${npm_version}" >&2
   exit 1
 fi
-echo "Toolchain pilota: node ${node_version}, npm ${npm_version}"
+echo "Toolchain: node ${node_version}, npm ${npm_version}"
 
 download "$YARN_URL" "$toolchain/yarn.tgz"
 if ! python3 - "$toolchain/yarn.tgz" "$YARN_SHA512" << 'PY'
@@ -241,8 +241,8 @@ if missing or prefixed or unexpected or info is None or info.file_size <= 0:
     sys.exit(1)
 PY
 
-mkdir -p "$DIST_DIR"
-rm -f "$DIST_DIR/$FUNCTION_ARTIFACT" "$DIST_DIR/release-manifest.json"
+mkdir -p "$DIST_DIR/manifests"
+rm -f "$DIST_DIR/$FUNCTION_ARTIFACT"
 mv "$toolchain/package.zip" "$DIST_DIR/$FUNCTION_ARTIFACT"
 zip_sha=$(sha256sum "$DIST_DIR/$FUNCTION_ARTIFACT" | awk '{print $1}')
 
@@ -286,7 +286,7 @@ manifest = {
         "functionalTest": False,
     },
 }
-destination = Path(os.environ["DIST_DIR"]) / "release-manifest.json"
+destination = Path(os.environ["DIST_DIR"]) / "manifests" / (os.environ["FUNCTION_LOGICAL_NAME"] + ".json")
 destination.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 PY
 

@@ -24,7 +24,6 @@ GLOBAL_FILES = [
     "buildspec.yml",
     "buildspec-plan.yml",
     "buildspec-deploy.yml",
-    "functions.json",
 ]
 GLOBAL_DIRS = [
     "shared",
@@ -87,6 +86,11 @@ def write_outputs(plan, exit_code):
         lines.append(f"  - {item.get('logicalName')}: {item.get('reason')}")
     if not plan.get("incomparable"):
         lines.append("  (none)")
+    lines.append("orphan:")
+    for item in plan.get("orphan", []):
+        lines.append(f"  - {item}")
+    if not plan.get("orphan"):
+        lines.append("  (none)")
     lines.append("blocked:")
     blocked = plan.get("blockedPaths") or plan.get("blocked") or []
     if isinstance(blocked, str):
@@ -112,6 +116,7 @@ def empty_plan(commit, status, reason, **extra):
         "unchanged": [],
         "unmanaged": extra.get("unmanaged", []),
         "incomparable": extra.get("incomparable", []),
+        "orphan": extra.get("orphan", []),
         "blockedPaths": extra.get("blockedPaths", []),
         "state": extra.get("state", "unknown"),
     }
@@ -153,6 +158,22 @@ def load_catalog():
             raise ValueError(f"{logical}: directory fuori dal repository")
         by_name[logical] = entry
     return by_name
+
+
+def find_orphans(catalog):
+    functions_root = REPO / "functions"
+    if not functions_root.is_dir():
+        return []
+    mapped = set()
+    for entry in catalog.values():
+        mapped.add(Path(entry["directory"]).name)
+    orphans = []
+    for child in sorted(functions_root.iterdir()):
+        if not child.is_dir() or child.name.startswith("."):
+            continue
+        if child.name not in mapped:
+            orphans.append(f"functions/{child.name}")
+    return orphans
 
 
 def git_is_commit(sha):
@@ -285,6 +306,7 @@ except (OSError, ValueError, json.JSONDecodeError) as exc:
         empty_plan(head, "blocked", f"functions.json illeggibile: {exc}", blockedPaths=[str(exc)]),
         1,
     )
+orphans = find_orphans(catalog)
 
 state_result = read_state()
 if state_result["error"] == "env":
@@ -295,6 +317,7 @@ if state_result["error"] == "env":
             "variabili di stato S3 mancanti: " + ", ".join(state_result["missing"]),
             unmanaged=unmanaged_all(catalog, "stato non letto"),
             blockedPaths=state_result["missing"],
+            orphan=orphans,
         ),
         1,
     )
@@ -306,6 +329,7 @@ if state_result["error"] in {"sts", "account", "s3"}:
             state_result.get("detail") or state_result["error"],
             unmanaged=unmanaged_all(catalog, "stato non letto"),
             blockedPaths=[state_result["error"]],
+            orphan=orphans,
         ),
         1,
     )
@@ -318,19 +342,27 @@ if state_result["error"] == "malformed":
             unmanaged=unmanaged_all(catalog, "stato malformato"),
             blockedPaths=["release-state"],
             state="malformed",
+            orphan=orphans,
         ),
         1,
     )
 
 if state_result["error"] == "missing":
+    names = list(catalog)
     write_outputs(
-        empty_plan(
-            head,
-            "empty",
-            "oggetto S3 assente: tutte le funzioni restano unmanaged fino al primo deploy esplicito",
-            unmanaged=unmanaged_all(catalog, "nessuno stato di deploy riuscito"),
-            state="absent",
-        ),
+        {
+            "status": "selected" if names else "empty",
+            "commit": head,
+            "reason": "oggetto S3 assente: primo rilascio automatico di tutte le funzioni in catalogo",
+            "targets": names,
+            "included": names,
+            "unchanged": [],
+            "unmanaged": [],
+            "incomparable": [],
+            "orphan": orphans,
+            "blockedPaths": [],
+            "state": "absent",
+        },
         0,
     )
 
@@ -345,6 +377,7 @@ if inconsistency:
             unmanaged=unmanaged_all(catalog, "stato incoerente"),
             blockedPaths=["release-state"],
             state="inconsistent",
+            orphan=orphans,
         ),
         1,
     )
@@ -367,6 +400,7 @@ if state_functions and not ancestor_commits:
             unmanaged=unmanaged_all(catalog, "commit di stato non antenato"),
             blockedPaths=["git-history"],
             state="present",
+            orphan=orphans,
         ),
         1,
     )
@@ -383,6 +417,7 @@ if blocked_paths:
             unmanaged=unmanaged_all(catalog, "pianificazione bloccata"),
             blockedPaths=blocked_paths,
             state="present",
+            orphan=orphans,
         ),
         1,
     )
@@ -395,12 +430,7 @@ incomparable = []
 for logical, entry in catalog.items():
     state = state_functions.get(logical)
     if state is None:
-        unmanaged.append(
-            {
-                "logicalName": logical,
-                "reason": "nessuno stato: esclusa dal piano fino al primo deploy esplicito",
-            }
-        )
+        included.append(logical)
         continue
     sha = state["commit"].strip().lower()
     if not git_is_commit(sha):
@@ -439,6 +469,7 @@ plan = {
     "unchanged": unchanged,
     "unmanaged": unmanaged,
     "incomparable": incomparable,
+    "orphan": orphans,
     "blockedPaths": [],
     "state": "present",
 }

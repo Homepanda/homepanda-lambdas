@@ -11,13 +11,44 @@ interrupt() {
   exit 1
 }
 
-if [[ ! -v BUILD_TARGETS ]]; then
-  interrupt "BUILD_TARGETS è obbligatorio."
+targets_file=${RELEASE_TARGETS_FILE:-}
+if [[ -z "$targets_file" && -n "${CODEBUILD_SRC_DIR_PlanArtifact:-}" ]]; then
+  targets_file=$CODEBUILD_SRC_DIR_PlanArtifact/release-targets.json
+fi
+if [[ -z "$targets_file" ]]; then
+  targets_file=$ROOT/release-targets.json
+fi
+
+if [[ -f "$targets_file" ]]; then
+  BUILD_TARGETS=$(python3 - "$targets_file" << 'PY'
+import json
+import sys
+from pathlib import Path
+
+data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+if data.get("status") == "blocked":
+    sys.stderr.write("release-targets.json è blocked: nessuna build automatica.\n")
+    sys.exit(1)
+targets = data.get("targets")
+if not isinstance(targets, list):
+    sys.stderr.write("release-targets.json: targets non è una lista.\n")
+    sys.exit(1)
+print(",".join(targets))
+PY
+  ) || interrupt "release-targets.json non valido."
+  echo "Target dal piano: ${BUILD_TARGETS:-<vuoto>}"
+elif [[ -v BUILD_TARGETS ]]; then
+  echo "Target da BUILD_TARGETS (override manuale)."
+else
+  interrupt "manca release-targets.json e BUILD_TARGETS non è impostato."
 fi
 
 stripped=${BUILD_TARGETS//[[:space:],]/}
 if [[ -z "$stripped" ]]; then
-  interrupt "BUILD_TARGETS è vuoto."
+  echo "Nessun target da costruire. Build vuota, successo."
+  mkdir -p "$ROOT/dist/manifests"
+  printf '%s\n' '{"releases":[]}' > "$ROOT/dist/release-manifest.json"
+  exit 0
 fi
 
 if [[ ! -f "$MANIFEST" ]]; then
@@ -186,3 +217,24 @@ for key, value in item["env"].items():
   rm -f "$env_file"
   bash "$FUNCTION_SCRIPT"
 done
+
+python3 - "$ROOT/dist" "$BUILD_TARGETS" << 'PY'
+import json
+import sys
+from pathlib import Path
+
+dist = Path(sys.argv[1])
+names = [part for part in sys.argv[2].split(",") if part]
+manifests_dir = dist / "manifests"
+releases = []
+for name in names:
+    path = manifests_dir / f"{name}.json"
+    if not path.is_file():
+        sys.stderr.write(f"manifest mancante dopo la build: {path}\n")
+        sys.exit(1)
+    releases.append(json.loads(path.read_text(encoding="utf-8")))
+(dist / "release-manifest.json").write_text(
+    json.dumps({"releases": releases}, indent=2) + "\n",
+    encoding="utf-8",
+)
+PY
