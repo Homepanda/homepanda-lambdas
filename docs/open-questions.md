@@ -6,4 +6,5 @@
 4. Quando si potrà costruire lo zip e confrontare il `CodeSha256` con `TBbIN+yfQqPFi70Cviy0ZvJL2CDQJAgBrKB/X24hx10=`?
 5. Il pacchetto in AWS non fa il parse. Si pubblica la correzione locale di `generateXml.mjs`, oppure si lascia la funzione com'è finché non si decide il pilota di deploy?
 6. Questa funzione è il pilota di deploy, o l'impostazione si ferma al sorgente finché non si sceglie un'altra funzione meno critica?
-7. Si autorizza più avanti l'inventario in sola lettura delle altre funzioni nello stesso account e nella stessa regione?
+7. Si autorizza più avanti l'inventario in sola lettura delle altre funzioni nello stesso account e nella stessa regione? Il 2026-10-16 è stata letta solo `lambda-immobiliare-leads-handler`.
+8. In `services/immobiliare.mjs` di leads l'identificatore `nseDetail` non è dichiarato. Si pubblica una correzione, oppure il sorgente resta identico al pacchetto AWS finché non si decide un deploy?

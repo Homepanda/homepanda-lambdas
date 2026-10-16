@@ -1,7 +1,7 @@
 {
   "scope": "partial",
-  "note": "Solo lambda-immobiliare-ads-handler. Non è l'inventario delle 30 funzioni.",
-  "collectedAt": "2026-10-13",
+  "note": "lambda-immobiliare-ads-handler e lambda-immobiliare-leads-handler. Non è l'inventario delle 30 funzioni.",
+  "collectedAt": "2026-10-16",
   "accountId": "247981707334",
   "region": "eu-central-1",
   "functions": [
@@ -63,12 +63,107 @@
       "tags": {},
       "tracingMode": "PassThrough",
       "snapStart": "None"
+    },
+    {
+      "functionName": "lambda-immobiliare-leads-handler",
+      "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-leads-handler",
+      "packageType": "Zip",
+      "runtime": "nodejs20.x",
+      "handler": "index.handler",
+      "architectures": ["x86_64"],
+      "memorySize": 128,
+      "timeout": 300,
+      "ephemeralStorage": 512,
+      "codeSize": 1630844,
+      "codeSha256": "TdcjKCUN3uNeoEniicm9wVnfM39JcauKmwF9alYw5PE=",
+      "description": "",
+      "role": "arn:aws:iam::247981707334:role/service-role/lambda-immobiliare-leads-handler-role-nfrwqk6p",
+      "layers": [],
+      "vpc": null,
+      "reservedConcurrency": null,
+      "version": "$LATEST",
+      "publishedVersionCount": 94,
+      "aliases": [],
+      "revisionId": "0e7a874c-2e37-4bff-a35a-c818856237bf",
+      "lastModified": "2026-09-15T12:09:12.000+0000",
+      "state": "Active",
+      "lastUpdateStatus": "Successful",
+      "environmentVariableNames": [
+        "PROVIDER_IMMOBILIARE_FC",
+        "PROVIDER_IMMOBILIARE_HP",
+        "PROVIDER_IMMOBILIARE_RLB"
+      ],
+      "eventSourceMappings": [
+        {
+          "uuid": "d479cb95-a964-414f-a0df-c0aa348cf05e",
+          "state": "Enabled",
+          "eventSourceArn": "arn:aws:sqs:eu-central-1:247981707334:ImmobiliareLeads",
+          "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-leads-handler",
+          "batchSize": 1,
+          "maximumBatchingWindowInSeconds": 0,
+          "invocationTarget": "$LATEST"
+        },
+        {
+          "uuid": "28136adb-252c-46c6-9f6a-cce156de8aae",
+          "state": "Enabled",
+          "eventSourceArn": "arn:aws:sqs:eu-central-1:247981707334:ImmobiliareFondoCasaLeads",
+          "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-leads-handler",
+          "batchSize": 10,
+          "maximumBatchingWindowInSeconds": 0,
+          "invocationTarget": "$LATEST"
+        },
+        {
+          "uuid": "1830232c-abdc-4e09-b702-57dd5a38da0a",
+          "state": "Enabled",
+          "eventSourceArn": "arn:aws:sqs:eu-central-1:247981707334:ImmobiliareNewMessage",
+          "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-leads-handler",
+          "batchSize": 10,
+          "maximumBatchingWindowInSeconds": 0,
+          "invocationTarget": "$LATEST"
+        },
+        {
+          "uuid": "e5fe65ae-f65f-4e11-bda9-bd2046074a7e",
+          "state": "Enabled",
+          "eventSourceArn": "arn:aws:sqs:eu-central-1:247981707334:RelabImmobiliareLeads",
+          "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-leads-handler",
+          "batchSize": 10,
+          "maximumBatchingWindowInSeconds": 0,
+          "invocationTarget": "$LATEST"
+        },
+        {
+          "uuid": "4cdbff09-cb41-4d3d-8e58-d67351c1926e",
+          "state": "Enabled",
+          "eventSourceArn": "arn:aws:sqs:eu-central-1:247981707334:RelabImmobiliareNewMessage",
+          "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-leads-handler",
+          "batchSize": 10,
+          "maximumBatchingWindowInSeconds": 0,
+          "invocationTarget": "$LATEST"
+        }
+      ],
+      "resourcePolicy": null,
+      "eventInvokeConfig": {
+        "maximumRetryAttempts": 0,
+        "maximumEventAgeInSeconds": 21600,
+        "destinationConfig": {
+          "onSuccess": {},
+          "onFailure": {}
+        }
+      },
+      "logGroup": {
+        "name": "/aws/lambda/lambda-immobiliare-leads-handler",
+        "retentionInDays": null
+      },
+      "tags": {},
+      "tracingMode": "PassThrough",
+      "snapStart": "None"
     }
   ],
   "unverified": [
     "Trigger esterni oltre l'event source mapping SQS (EventBridge, API Gateway, SNS, S3) non cercati.",
     "Contenuto della coda ImmobiliareAds e dei suoi producer non verificato.",
     "Policy IAM del ruolo di esecuzione non letta.",
-    "Confronto tra yarn install locale e CodeSha256 del pacchetto distribuito non eseguito."
+    "Confronto tra yarn install locale e CodeSha256 del pacchetto distribuito non eseguito.",
+    "Policy IAM del ruolo di lambda-immobiliare-leads-handler non letta.",
+    "Producer delle code ImmobiliareLeads, ImmobiliareFondoCasaLeads, ImmobiliareNewMessage, RelabImmobiliareLeads e RelabImmobiliareNewMessage non verificati."
   ]
 }

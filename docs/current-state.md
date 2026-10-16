@@ -1,6 +1,6 @@
 # Stato attuale
 
-Aggiornato il 2026-10-13. Ambito: sola funzione `lambda-immobiliare-ads-handler`. Le altre Lambda non sono state inventariate.
+Aggiornato il 2026-10-16. Ambito: `lambda-immobiliare-ads-handler` e `lambda-immobiliare-leads-handler`. Le altre Lambda non sono state inventariate.
 
 ## Repository
 
@@ -55,9 +55,60 @@ Variabili d'ambiente presenti, solo nomi: `HOMEPANDA_PROPERTY_SERVICE_URL`, `IMM
 
 `node --test functions/lambda-immobiliare-ads-handler/tests/handler.test.mjs` con Node v22.14.0: 1 test passato. Copre solo l'azione sconosciuta, che esce prima di Immobiliare e del webhook Homepanda. Non è uno smoke test sulla funzione AWS.
 
-## Cosa non è stato verificato
+## Cosa non è stato verificato per ads
 
 - Conteggio delle altre funzioni e trigger fuori da Lambda (producer della coda, EventBridge, API Gateway).
 - Policy del ruolo di esecuzione.
 - Build riproducibile e uguaglianza dell'hash con il pacchetto in produzione.
 - Deploy, pipeline, import CloudFormation.
+
+## lambda-immobiliare-leads-handler
+
+Lettura con il profilo `default`, identità `arn:aws:iam::247981707334:user/user-deploy`, regione `eu-central-1`, il 2026-10-16. Nessuna scrittura. Lo zip distribuito è stato scaricato in `/tmp` e il suo SHA-256 in base64 coincide con `CodeSha256` `TdcjKCUN3uNeoEniicm9wVnfM39JcauKmwF9alYw5PE=`.
+
+In Git è entrato il sorgente di quello zip, senza `node_modules`. Sono cinque file: `index.mjs`, `package.json`, `yarn.lock`, `services/homepanda.mjs`, `services/immobiliare.mjs`. Lo zip contiene 840 file, dipendenze comprese. `node --check` sui tre moduli passa.
+
+La cartella `/home/corrado/homepanda/project/lambda-immobiliare-leads-handler` non è stata importata. `package.json` e `yarn.lock` sono identici allo zip. `index.mjs` e i due service no: lo zip gestisce anche la coda `RelabImmobiliareNewMessage` e usa le API `/fapi/inbox/leads`.
+
+| Campo | Valore |
+| --- | --- |
+| Nome | `lambda-immobiliare-leads-handler` |
+| Account | `247981707334` |
+| Regione | `eu-central-1` |
+| PackageType | Zip |
+| Runtime | `nodejs20.x` |
+| Handler | `index.handler` |
+| Architettura | `x86_64` |
+| Memoria | 128 MB |
+| Timeout | 300 s |
+| Storage temporaneo | 512 MB |
+| Layer | nessuno |
+| Concorrenza riservata | assente |
+| Alias | nessuno |
+| Versioni pubblicate | 94, invocazione osservata su `$LATEST` |
+| VPC | assente |
+| Ruolo | `lambda-immobiliare-leads-handler-role-nfrwqk6p` |
+| Log group | `/aws/lambda/lambda-immobiliare-leads-handler`, retention non impostata |
+| Tag | nessuno |
+| Resource policy | assente |
+| Invocazione asincrona | `MaximumRetryAttempts` 0, `MaximumEventAgeInSeconds` 21600, senza destinazioni, su `$LATEST` |
+
+Event source mapping abilitati, ARN della funzione senza qualificatore. Le code invocano `$LATEST`.
+
+| Coda | Batch |
+| --- | --- |
+| `ImmobiliareLeads` | 1 |
+| `ImmobiliareFondoCasaLeads` | 10 |
+| `ImmobiliareNewMessage` | 10 |
+| `RelabImmobiliareLeads` | 10 |
+| `RelabImmobiliareNewMessage` | 10 |
+
+Variabili d'ambiente presenti, solo nomi: `PROVIDER_IMMOBILIARE_HP`, `PROVIDER_IMMOBILIARE_FC`, `PROVIDER_IMMOBILIARE_RLB`. I valori restano sulla funzione.
+
+In `services/immobiliare.mjs` il pacchetto usa due volte l'identificatore `nseDetail`, che non è dichiarato. Il modulo fa il parse e l'identificatore è rimasto. Rispetto allo zip, l'autocomplete di `retrieveMessage` è in un `try/catch`: un errore di quella chiamata viene scritto nel log e il recupero del messaggio prosegue.
+
+Il pin di build è Node 20.20.2 con Yarn Classic 1.22.22. L'API Lambda non espone la patch di `nodejs20.x`, quindi il pin non è quella patch. `yarn install --frozen-lockfile` con Yarn 1.22.22 è riuscito e non ha modificato `yarn.lock`. `BUILD_TARGETS=immobiliare-leads-handler bash scripts/build-selected.sh` ha prodotto `dist/immobiliare-leads-handler.zip` con SHA-256 `5e484dc806267d5b033c77c5a6342688e3f090ae117c04dbd22f48350a93615b`. Quell'hash non è il `CodeSha256` del pacchetto in AWS: lo zip ricostruito non è stato confrontato come identico a quello in produzione e non è stato pubblicato.
+
+`node --test functions/lambda-immobiliare-leads-handler/tests/handler.test.mjs` con Node v22.14.0: 1 test passato. Copre solo l'evento senza record, che esce prima del login Immobiliare e delle chiamate a Homepanda. Non è uno smoke test sulla funzione AWS.
+
+Il deploy di questa funzione non è preparato.

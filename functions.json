@@ -30,6 +30,35 @@
         "IMMOBILIARE_AGENCY_RLB",
         "IMMOBILIARE_AUTHORIZATION"
       ]
+    },
+    {
+      "logicalName": "immobiliare-leads-handler",
+      "functionName": "lambda-immobiliare-leads-handler",
+      "directory": "functions/lambda-immobiliare-leads-handler",
+      "packageType": "Zip",
+      "runtime": "nodejs20.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "accountId": "247981707334",
+      "region": "eu-central-1",
+      "build": {
+        "script": "build.sh",
+        "sourceRoot": "src",
+        "strategy": "nodejs-zip-yarn-classic",
+        "artifact": "immobiliare-leads-handler.zip",
+        "toolchain": {
+          "language": "nodejs",
+          "version": "20.20.2",
+          "packageManager": "yarn-classic",
+          "packageManagerVersion": "1.22.22",
+          "pinScope": "function"
+        }
+      },
+      "environmentVariableNames": [
+        "PROVIDER_IMMOBILIARE_FC",
+        "PROVIDER_IMMOBILIARE_HP",
+        "PROVIDER_IMMOBILIARE_RLB"
+      ]
     }
   ]
 }
