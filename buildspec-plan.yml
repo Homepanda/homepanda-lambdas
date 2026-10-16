@@ -1,0 +1,37 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - |
+        set -eu
+        command -v aws
+        command -v git
+        command -v python3
+        command -v bash
+        aws --version
+        git --version
+
+  pre_build:
+    commands:
+      - |
+        set -eu
+        test -d "$CODEBUILD_SRC_DIR/.git"
+        test -f "$CODEBUILD_SRC_DIR/functions.json"
+        test -f "$CODEBUILD_SRC_DIR/scripts/plan-release.sh"
+        : "${RELEASE_STATE_ACCOUNT_ID:?}"
+        : "${RELEASE_STATE_REGION:?}"
+        : "${RELEASE_STATE_BUCKET:?}"
+        : "${RELEASE_STATE_KEY:?}"
+
+  build:
+    commands:
+      - |
+        set -eu
+        bash "$CODEBUILD_SRC_DIR/scripts/plan-release.sh"
+
+artifacts:
+  files:
+    - release-targets.json
+    - release-plan.json
+    - release-plan.txt
