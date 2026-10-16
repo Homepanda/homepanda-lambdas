@@ -211,55 +211,43 @@ export default class Immobiliare {
         console.log(`Email not found in message`);
         return null;
       }
-      try {
-        const autocompleteResponse = await this.#client.get(`/fapi/inbox/leads/autocomplete`, {
-          headers: {
-            'Accept': '*/*',
-            'Accept-Language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Accept-Encoding': 'gzip, deflate, br, zstd',
-            'content-language': 'it-IT',
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
-          },
-          jar: this.#cookies,
-          params: {
-            term: messageInfo.email.toLowerCase()
+      let page = 0;      
+      do {
+        page += 1;
+        try {
+          const response = await this.#client.get(`/fapi/inbox/leads`, {
+            headers: {
+              'Accept': '*/*',
+              'Accept-Language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7',
+              'Accept-Encoding': 'gzip, deflate, br, zstd',
+              'content-language': 'it-IT',
+              'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
+            },
+            jar: this.#cookies,
+            params: {
+              sort: '-lastActivity',
+              leadType: 'message',
+              page,
+              results: 30
+            }
+          });
+          contactFind = response.data.list.filter((item) => {
+            return (item.customer.mail.toLowerCase() === messageInfo.email.toLowerCase());
+          });
+          if (contactFind.length) {
+            for (let index = 0; index < contactFind.length; index++) {
+              contactFind[index].messageQueue = messageInfo;
+              messagesId.push(contactFind[index].id);
+            }
+            this.#messageLeads.push(...contactFind);
+            break;
           }
-        });
-        if (autocompleteResponse.data.suggestions.length === 0) {
-          console.log(`Email ${messageInfo.email.toLowerCase()} not found on platform`);
-          return null;
-        }
-      } catch (error) {
-        console.error(error);
-      }
 
-      const response = await this.#client.get(`/fapi/inbox/leads`, {
-        headers: {
-          'Accept': '*/*',
-          'Accept-Language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7',
-          'Accept-Encoding': 'gzip, deflate, br, zstd',
-          'content-language': 'it-IT',
-          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
-        },
-        jar: this.#cookies,
-        params: {
-          q: messageInfo.email.toLowerCase(),
-          sort: '-lastActivity',
-          leadType: 'message',
-          page: 1,
-          results: 30
+        } catch (error) {
+          console.error(error);
         }
-      });
-      const contactFind = response.data.list;
-      const messagesId = [];
+      } while (page < 31);
 
-      for (let index = 0; index < response.data.pagination.total; index++) {
-        contactFind[index].messageQueue = messageInfo;
-        messagesId.push(contactFind[index].id);
-      }
-      if (contactFind.length) {
-        this.#messageLeads.push(...contactFind);
-      }
       for (let i = 0; i < messagesId.length; i++) {
         const messageId = messagesId[i];
         await this.#client.patch(`/fapi/inbox/leads/status`, { leads: [{ ids: [messageId], leadType: "message" }], status: "handled" }, { jar: this.#cookies });
