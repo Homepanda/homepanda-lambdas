@@ -59,6 +59,35 @@
         "PROVIDER_IMMOBILIARE_HP",
         "PROVIDER_IMMOBILIARE_RLB"
       ]
+    },
+    {
+      "logicalName": "homepanda-whatsapp-bitrix-message",
+      "functionName": "lambda-homepanda-whatsapp-bitrix-message",
+      "directory": "functions/lambda-homepanda-whatsapp-bitrix-message",
+      "packageType": "Zip",
+      "runtime": "nodejs24.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "accountId": "247981707334",
+      "region": "eu-central-1",
+      "build": {
+        "script": "build.sh",
+        "sourceRoot": "src",
+        "strategy": "nodejs-zip-yarn-classic",
+        "artifact": "homepanda-whatsapp-bitrix-message.zip",
+        "toolchain": {
+          "language": "nodejs",
+          "version": "24.11.0",
+          "packageManager": "yarn-classic",
+          "packageManagerVersion": "1.22.22",
+          "pinScope": "function"
+        }
+      },
+      "environmentVariableNames": [
+        "BITRIX_CLIENT_ID",
+        "BITRIX_CLIENT_SECRET",
+        "BITRIX_URL"
+      ]
     }
   ]
 }

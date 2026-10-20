@@ -1,12 +1,12 @@
 # Stato attuale
 
-Aggiornato il 2026-10-16. Ambito: `lambda-immobiliare-ads-handler` e `lambda-immobiliare-leads-handler`. Le altre Lambda non sono state inventariate.
+Aggiornato il 2026-10-19. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler` e `lambda-homepanda-whatsapp-bitrix-message`. Le altre Lambda non sono state inventariate.
 
 ## Repository
 
 - Destinazione: `https://github.com/Homepanda/homepanda-lambdas.git`.
 - Il clone locale non ha commit. Il branch remoto `origin/main` risulta assente (`gone`).
-- Nel repository non c'erano IaC, pipeline, buildspec, Dockerfile o test.
+- Nel repository non c'erano IaC, pipeline, buildspec o Dockerfile.
 
 ## Sorgente usato
 
@@ -112,3 +112,40 @@ Il pin di build è Node 20.20.2 con Yarn Classic 1.22.22. L'API Lambda non espon
 `node --test functions/lambda-immobiliare-leads-handler/tests/handler.test.mjs` con Node v22.14.0: 1 test passato. Copre solo l'evento senza record, che esce prima del login Immobiliare e delle chiamate a Homepanda. Non è uno smoke test sulla funzione AWS.
 
 Il deploy di questa funzione non è preparato.
+
+## lambda-homepanda-whatsapp-bitrix-message
+
+Lettura con il profilo `default`, identità `arn:aws:iam::247981707334:user/user-deploy`, regione `eu-central-1`, il 2026-10-19. Nessuna scrittura. Lo zip distribuito è stato scaricato in memoria e il suo SHA-256 in base64 coincide con `CodeSha256` `b4KiRqFcyeFtHyIcj2qsY3TbgapJd6/HfrFyEb9Ve3U=`.
+
+In Git è entrato il sorgente di quello zip, senza `node_modules`. Sono cinque file: `index.mjs`, `package.json`, `yarn.lock`, `lib/bitrix.mjs`, `lib/secretManager.mjs`. Lo zip contiene 811 file, dipendenze comprese. `node --check` sui tre moduli passa.
+
+| Campo | Valore |
+| --- | --- |
+| Nome | `lambda-homepanda-whatsapp-bitrix-message` |
+| Account | `247981707334` |
+| Regione | `eu-central-1` |
+| PackageType | Zip |
+| Runtime | `nodejs24.x` |
+| Handler | `index.handler` |
+| Architettura | `x86_64` |
+| Memoria | 128 MB |
+| Timeout | 3 s |
+| Storage temporaneo | 512 MB |
+| Layer | nessuno |
+| Concorrenza riservata | assente |
+| Alias | nessuno |
+| Versioni pubblicate | 1, invocazione osservata su `$LATEST` |
+| VPC | assente |
+| Ruolo | `lambda-homepanda-whatsapp-bitrix-message-role-irqlmjye` |
+| Log group | `/aws/lambda/lambda-homepanda-whatsapp-bitrix-message`, retention non impostata |
+| Tag | nessuno |
+| Resource policy | presente, invocazione consentita da ALB target group `lambda-2bxrbhk7uoto3ebm8ya` |
+| Invocazione asincrona | assente |
+| Event source mapping | assente |
+| Function URL | assente |
+
+Variabili d'ambiente presenti, solo nomi: `BITRIX_URL`, `BITRIX_CLIENT_ID`, `BITRIX_CLIENT_SECRET`. I valori restano sulla funzione.
+
+`node --test functions/lambda-homepanda-whatsapp-bitrix-message/tests/handler.test.mjs`: 1 test passato. Copre la presenza del `basePath('/bitrix')` e l'assenza di una rotta `GET /missing` nel sorgente, senza invocare Secrets Manager o Bitrix.
+
+`BUILD_TARGETS=homepanda-whatsapp-bitrix-message bash scripts/build-selected.sh` produce `dist/homepanda-whatsapp-bitrix-message.zip` con SHA-256 `aa013f9d33e875878ad393633ec87098ec9bdc7626db944c964b55823ccdb544`. L'hash ricostruito non è usato come prova di identicità con il pacchetto in produzione e non viene pubblicato.
