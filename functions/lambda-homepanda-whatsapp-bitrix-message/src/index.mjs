@@ -118,7 +118,7 @@ app.post('/handler/chat', async (c) => {
     const chatId = body['data[message][chatId]'];
     let envelope = {};
     try {
-      const conversation = findConversationByChatId(chatId);
+      const conversation = await findConversationByChatId(chatId);
       envelope = {
         clientMessageId: body['data[message][uuid]'],
         toPhone: conversation.toPhone,
