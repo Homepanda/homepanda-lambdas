@@ -409,11 +409,77 @@ for sha in ancestor_commits:
     blocked_paths.extend(git_diff_names(sha, head, global_paths))
 blocked_paths = sorted(set(blocked_paths))
 if blocked_paths:
+    manual_raw = os.environ.get("MANUAL_TARGETS", "")
+    if manual_raw.strip():
+        parts = [part.strip() for part in manual_raw.split(",")]
+        if any(part == "" for part in parts):
+            write_outputs(
+                empty_plan(
+                    head,
+                    "blocked",
+                    "MANUAL_TARGETS contiene un target vuoto",
+                    unmanaged=unmanaged_all(catalog, "selezione manuale non valida"),
+                    blockedPaths=blocked_paths + ["MANUAL_TARGETS"],
+                    state="present",
+                    orphan=orphans,
+                ),
+                1,
+            )
+        if len(parts) != len(set(parts)):
+            write_outputs(
+                empty_plan(
+                    head,
+                    "blocked",
+                    "MANUAL_TARGETS contiene target duplicati",
+                    unmanaged=unmanaged_all(catalog, "selezione manuale non valida"),
+                    blockedPaths=blocked_paths + ["MANUAL_TARGETS"],
+                    state="present",
+                    orphan=orphans,
+                ),
+                1,
+            )
+        unknown = [name for name in parts if name not in catalog]
+        if unknown:
+            write_outputs(
+                empty_plan(
+                    head,
+                    "blocked",
+                    "MANUAL_TARGETS contiene logicalName sconosciuti: " + ", ".join(unknown),
+                    unmanaged=unmanaged_all(catalog, "selezione manuale non valida"),
+                    blockedPaths=blocked_paths + ["MANUAL_TARGETS"],
+                    state="present",
+                    orphan=orphans,
+                ),
+                1,
+            )
+        write_outputs(
+            {
+                "status": "selected",
+                "commit": head,
+                "reason": (
+                    "selezione manuale per modifiche a path condivisi o di pipeline: "
+                    + ", ".join(blocked_paths)
+                ),
+                "targets": parts,
+                "included": parts,
+                "unchanged": [],
+                "unmanaged": [
+                    {"logicalName": name, "reason": "esclusa dalla selezione manuale"}
+                    for name in catalog
+                    if name not in parts
+                ],
+                "incomparable": [],
+                "orphan": orphans,
+                "blockedPaths": blocked_paths,
+                "state": "present",
+            },
+            0,
+        )
     write_outputs(
         empty_plan(
             head,
             "blocked",
-            "modifiche a path condivisi o di pipeline: serve una selezione manuale",
+            "modifiche a path condivisi o di pipeline: serve MANUAL_TARGETS",
             unmanaged=unmanaged_all(catalog, "pianificazione bloccata"),
             blockedPaths=blocked_paths,
             state="present",

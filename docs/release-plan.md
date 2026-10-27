@@ -38,6 +38,7 @@ Gli script non contengono account, bucket o regione. I progetti CodeBuild Plan e
 | `RELEASE_STATE_REGION` | regione dell’oggetto S3 di stato |
 | `RELEASE_STATE_BUCKET` | bucket dello stato |
 | `RELEASE_STATE_KEY` | chiave dell’oggetto JSON |
+| `MANUAL_TARGETS` | solo se Plan è bloccato da path condivisi: elenco CSV di `logicalName` da includere |
 
 Valori attesi in produzione, da configurare sui progetti e non da copiare negli script:
 
@@ -85,7 +86,7 @@ Se il commit di stato non è antenato di HEAD, il target è `incomparable`, non 
 
 ## Path che bloccano la selezione automatica
 
-Se il diff tra un commit di stato antenato e HEAD tocca uno di questi path, il piano è `blocked`, `targets=[]`, exit 1 dopo aver scritto i report:
+Se il diff tra un commit di stato antenato e HEAD tocca uno di questi path, la selezione automatica è sospesa:
 
 - `shared/`
 - `scripts/`
@@ -93,6 +94,8 @@ Se il diff tra un commit di stato antenato e HEAD tocca uno di questi path, il p
 - `buildspec-plan.yml`
 - `buildspec-deploy.yml`
 - `infra/`, `iam/`, `.github/`, `pipelines/`, `cloudformation/`, `terraform/` se presenti
+
+Con `MANUAL_TARGETS` impostato sul progetto Plan (CSV di `logicalName` presenti in `functions.json`), Plan emette quei target con `status=selected` e exit 0, lasciando i path bloccanti nel report. Senza `MANUAL_TARGETS`, Plan resta `blocked`, `targets=[]`, exit 1.
 
 Se esiste stato ma nessun commit di stato è antenato di HEAD, il piano è `blocked`.
 
