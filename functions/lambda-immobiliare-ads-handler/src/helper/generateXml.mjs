@@ -78,6 +78,8 @@ function translateBuildingType(builderTypeId) {
       return 268;
     case 40:
       return 262;
+    case 42:
+      return 83;
     default:
       return 14;
   }

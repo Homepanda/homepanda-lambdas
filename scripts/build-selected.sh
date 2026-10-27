@@ -119,7 +119,7 @@ for name in parts:
 
     build = entry.get("build") or {}
     strategy = build.get("strategy")
-    if strategy != "nodejs-zip-yarn-classic":
+    if strategy not in ("nodejs-zip-yarn-classic", "nodejs-zip-npm"):
         sys.stderr.write(f"Strategia non implementata: {strategy}\n")
         sys.exit(1)
 
@@ -142,6 +142,13 @@ for name in parts:
             sys.exit(1)
     if toolchain.get("language") != "nodejs":
         sys.stderr.write(f"Linguaggio non implementato: {toolchain.get('language')}\n")
+        sys.exit(1)
+    package_manager = toolchain.get("packageManager")
+    if strategy == "nodejs-zip-yarn-classic" and package_manager != "yarn-classic":
+        sys.stderr.write(f"{name}: packageManager inatteso per strategy yarn: {package_manager}\n")
+        sys.exit(1)
+    if strategy == "nodejs-zip-npm" and package_manager != "npm":
+        sys.stderr.write(f"{name}: packageManager inatteso per strategy npm: {package_manager}\n")
         sys.exit(1)
 
     script_rel = build.get("script")
@@ -184,7 +191,10 @@ for name in parts:
                 "FUNCTION_STRATEGY": strategy,
                 "FUNCTION_ARTIFACT": artifact,
                 "NODE_VERSION": toolchain["version"],
-                "YARN_VERSION": toolchain["packageManagerVersion"],
+                "PACKAGE_MANAGER": package_manager,
+                "PACKAGE_MANAGER_VERSION": toolchain["packageManagerVersion"],
+                "YARN_VERSION": toolchain["packageManagerVersion"] if package_manager == "yarn-classic" else "",
+                "NPM_VERSION": toolchain["packageManagerVersion"] if package_manager == "npm" else "",
                 "DIST_DIR": str(root / "dist"),
             },
         }

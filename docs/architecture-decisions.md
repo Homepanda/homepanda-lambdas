@@ -1,6 +1,6 @@
 # Decisioni
 
-Ambito attuale: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler` e `lambda-homepanda-whatsapp-bitrix-message`. Non c’è un pilota: Plan seleziona ogni cartella sotto `functions/` mappata in `functions.json`.
+Ambito attuale: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler` e `lambda-idealista-ads-handler`. Non c’è un pilota: Plan seleziona ogni cartella sotto `functions/` mappata in `functions.json`.
 
 ## Repository
 
@@ -22,13 +22,33 @@ functions/lambda-homepanda-whatsapp-bitrix-message/
   build.sh
   src/
   tests/
+functions/lambda-wikicasa-ads-handler/
+  build.sh
+  src/
+  tests/
+functions/lambda-idealista-ads-handler/
+  build.sh
+  src/
+  tests/
 ```
 
 `functions.json` separa `logicalName` e `functionName`. Il nome AWS, l'account e la regione stanno nel manifest e non si deducono dalla cartella. Non contiene valori di ambiente.
 
 ## Build
 
-Un solo `buildspec.yml` in radice, senza `runtime-versions`. La build legge `release-targets.json` dello stage Plan; `BUILD_TARGETS` resta solo override manuale. Ogni funzione ha la propria ricetta in `build.sh` (Node 22.14.0 per ads, Node 24.11.0 per leads e whatsapp-bitrix, Yarn Classic 1.22.22). I pin non sono condivisi. Python e container non sono implementati. Più target producono zip distinti e `dist/release-manifest.json` con `releases[]`.
+Un solo `buildspec.yml` in radice, senza `runtime-versions`. La build legge `release-targets.json` dello stage Plan; `BUILD_TARGETS` resta solo override manuale. Ogni funzione ha la propria ricetta in `build.sh` (Node 18.20.8 per Wikicasa, Node 22.14.0 per ads e Idealista, Node 24.11.0 per leads e whatsapp-bitrix). Le strategie supportate sono `nodejs-zip-yarn-classic` e `nodejs-zip-npm`. I pin non sono condivisi. Python e container non sono implementati. Più target producono zip distinti e `dist/release-manifest.json` con `releases[]`.
+
+## Codice di lambda-wikicasa-ads-handler
+
+Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-10-12. `CodeSha256` letto da AWS, `rPLThzdlLVmGMklD9YQ46arO3s5cH1EVBIZjkBvSTC4=`, coincide con lo zip scaricato.
+
+`package.json` resta quello del pacchetto con lockfile Yarn Classic. Runtime atteso `nodejs18.x`, handler `index.handler`, architettura `x86_64`.
+
+## Codice di lambda-idealista-ads-handler
+
+Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-10-12. `CodeSha256` letto da AWS, `X8uDXaqZIxdTumX07bdhiFQYUeoX5WYWBSijAhNS3oU=`, coincide con lo zip scaricato.
+
+`package.json` resta quello del pacchetto con lockfile npm (`package-lock.json`). Runtime atteso `nodejs22.x`, handler `index.handler`, architettura `x86_64`.
 
 ## Codice di questa funzione
 

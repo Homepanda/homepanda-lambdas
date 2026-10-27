@@ -88,6 +88,77 @@
         "BITRIX_CLIENT_SECRET",
         "BITRIX_URL"
       ]
+    },
+    {
+      "logicalName": "wikicasa-ads-handler",
+      "functionName": "lambda-wikicasa-ads-handler",
+      "directory": "functions/lambda-wikicasa-ads-handler",
+      "packageType": "Zip",
+      "runtime": "nodejs18.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "accountId": "247981707334",
+      "region": "eu-central-1",
+      "build": {
+        "script": "build.sh",
+        "sourceRoot": "src",
+        "strategy": "nodejs-zip-yarn-classic",
+        "artifact": "wikicasa-ads-handler.zip",
+        "toolchain": {
+          "language": "nodejs",
+          "version": "18.20.8",
+          "packageManager": "yarn-classic",
+          "packageManagerVersion": "1.22.22",
+          "pinScope": "function"
+        }
+      },
+      "environmentVariableNames": [
+        "HOMEPANDA_PROPERTY_SERVICE_URL",
+        "WIKICASA_PRIVATEKEY",
+        "WIKICASA_PUBLICKEY",
+        "WIKICASA_URL",
+        "WIKICASA_USERID",
+        "WIKICASA_USERID_HP",
+        "WIKICASA_USERID_RLB"
+      ]
+    },
+    {
+      "logicalName": "idealista-ads-handler",
+      "functionName": "lambda-idealista-ads-handler",
+      "directory": "functions/lambda-idealista-ads-handler",
+      "packageType": "Zip",
+      "runtime": "nodejs22.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "accountId": "247981707334",
+      "region": "eu-central-1",
+      "build": {
+        "script": "build.sh",
+        "sourceRoot": "src",
+        "strategy": "nodejs-zip-npm",
+        "artifact": "idealista-ads-handler.zip",
+        "toolchain": {
+          "language": "nodejs",
+          "version": "22.14.0",
+          "packageManager": "npm",
+          "packageManagerVersion": "10.9.2",
+          "pinScope": "function"
+        }
+      },
+      "environmentVariableNames": [
+        "HOMEPANDA_PROPERTY_SERVICE_URL",
+        "IDEALISTA_AUTHORIZATION",
+        "IDEALISTA_CONTACT_ID_HP",
+        "IDEALISTA_CONTACT_ID_RLB",
+        "IDEALISTA_FEEDKEY",
+        "IDEALISTA_FEEDKEY_HP",
+        "IDEALISTA_FEEDKEY_RLB_EUR",
+        "IDEALISTA_FEEDKEY_RLB_OST",
+        "IDEALISTA_FEEDKEY_RLB_PAR",
+        "IDEALISTA_URL",
+        "REDIS_HOST",
+        "REDIS_PORT"
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Stato attuale
 
-Aggiornato il 2026-10-19. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler` e `lambda-homepanda-whatsapp-bitrix-message`. Le altre Lambda non sono state inventariate.
+Aggiornato il 2026-10-27. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler` e `lambda-idealista-ads-handler`. Le altre Lambda non sono state inventariate.
 
 ## Repository
 
@@ -149,3 +149,19 @@ Variabili d'ambiente presenti, solo nomi: `BITRIX_URL`, `BITRIX_CLIENT_ID`, `BIT
 `node --test functions/lambda-homepanda-whatsapp-bitrix-message/tests/handler.test.mjs`: 1 test passato. Copre la presenza del `basePath('/bitrix')` e l'assenza di una rotta `GET /missing` nel sorgente, senza invocare Secrets Manager o Bitrix.
 
 `BUILD_TARGETS=homepanda-whatsapp-bitrix-message bash scripts/build-selected.sh` produce `dist/homepanda-whatsapp-bitrix-message.zip` con SHA-256 `aa013f9d33e875878ad393633ec87098ec9bdc7626db944c964b55823ccdb544`. L'hash ricostruito non è usato come prova di identicità con il pacchetto in produzione e non viene pubblicato.
+
+## lambda-wikicasa-ads-handler
+
+Lettura con il profilo `default`, identità `arn:aws:iam::247981707334:user/user-deploy`, regione `eu-central-1`, il 2026-10-27. Nessuna scrittura. Lo zip distribuito è stato scaricato in memoria e il suo SHA-256 in base64 coincide con `CodeSha256` `rPLThzdlLVmGMklD9YQ46arO3s5cH1EVBIZjkBvSTC4=`.
+
+In Git è entrato il sorgente di quello zip, senza `node_modules`: `index.mjs`, `package.json`, `yarn.lock`, `handler/homepanda.mjs`, `handler/payload.mjs`, `handler/wikicasa.mjs`. Lo zip contiene anche le dipendenze installate. Runtime AWS `nodejs18.x`, handler `index.handler`, architettura `x86_64`, VPC `vpc-0b801a60`. Event source mapping abilitato su `arn:aws:sqs:eu-central-1:247981707334:WikicasaAds`, batch size 1, invocazione su `$LATEST`.
+
+Variabili d'ambiente presenti, solo nomi: `HOMEPANDA_PROPERTY_SERVICE_URL`, `WIKICASA_PRIVATEKEY`, `WIKICASA_PUBLICKEY`, `WIKICASA_URL`, `WIKICASA_USERID`, `WIKICASA_USERID_HP`, `WIKICASA_USERID_RLB`.
+
+## lambda-idealista-ads-handler
+
+Lettura con il profilo `default`, identità `arn:aws:iam::247981707334:user/user-deploy`, regione `eu-central-1`, il 2026-10-27. Nessuna scrittura. Lo zip distribuito è stato scaricato in memoria e il suo SHA-256 in base64 coincide con `CodeSha256` `X8uDXaqZIxdTumX07bdhiFQYUeoX5WYWBSijAhNS3oU=`.
+
+In Git è entrato il sorgente di quello zip, senza `node_modules` e senza `.vscode`: `index.mjs`, `package.json`, `package-lock.json`, `services/comuni.csv`, `services/findCap.mjs`, `services/homepanda.mjs`, `services/idealista.mjs`, `services/payload.mjs`, `services/redis.mjs`. Runtime AWS `nodejs22.x`, handler `index.handler`, architettura `x86_64`, VPC `vpc-0b801a60`. Event source mapping abilitato su `arn:aws:sqs:eu-central-1:247981707334:IdealistaAds`, batch size 1, invocazione su `$LATEST`.
+
+Variabili d'ambiente presenti, solo nomi: `HOMEPANDA_PROPERTY_SERVICE_URL`, `IDEALISTA_AUTHORIZATION`, `IDEALISTA_CONTACT_ID_HP`, `IDEALISTA_CONTACT_ID_RLB`, `IDEALISTA_FEEDKEY`, `IDEALISTA_FEEDKEY_HP`, `IDEALISTA_FEEDKEY_RLB_EUR`, `IDEALISTA_FEEDKEY_RLB_OST`, `IDEALISTA_FEEDKEY_RLB_PAR`, `IDEALISTA_URL`, `REDIS_HOST`, `REDIS_PORT`.
