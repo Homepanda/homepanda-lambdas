@@ -1,6 +1,10 @@
 import { getSecret, updateSecret } from "./secretManager.mjs";
 
 const BITRIX_URL = process.env.BITRIX_URL;
+const BITRIX_USER_ID = process.env.BITRIX_USER_ID;
+const BITRIX_USER_SECRET = process.env.BITRIX_USER_SECRET;
+const BITRIX_BOT_ID = process.env.BITRIX_BOT_ID;
+const BITRIX_BOT_TOKEN = process.env.BITRIX_BOT_TOKEN;
 const BITRIX_CLIENT_ID = process.env.BITRIX_CLIENT_ID;
 const BITRIX_CLIENT_SECRET = process.env.BITRIX_CLIENT_SECRET;
 
@@ -89,12 +93,10 @@ export async function setDeliveryStatus(connectorName, connectorLine, messages) 
   return response;
 }
 
-export async function retrieveFile(botId, fileId) {
-  const authData = await getSecret();
-  const data = { botId, fileId, auth: authData.access_token }
-  const bitrixResponse = await makeRequest('POST', `${BITRIX_URL}/rest/imbot.v2.File.download`, JSON.stringify(data));
-  const bitrixData = await bitrixResponse.json();
-  const fileResponse = await fetch(bitrixData.result.downloadUrl);
+export async function retrieveFile(botId, fileId) {  
+  const data = { botId, botToken: BITRIX_BOT_TOKEN, fileId }
+  const bitrixResponse = await makeRequest('POST', `${BITRIX_URL}/rest/${BITRIX_USER_ID}/${BITRIX_USER_SECRET}/imbot.v2.File.download`, JSON.stringify(data));  
+  const fileResponse = await fetch(bitrixResponse.result.downloadUrl);
   if (!fileResponse.ok) {
     throw new Error(`Impossibile scaricare il file da Bitrix: ${fileResponse.statusText}`);
   }
