@@ -10,6 +10,7 @@ const BITRIX_CLIENT_SECRET = process.env.BITRIX_CLIENT_SECRET;
 
 async function makeRequest(method, url, body = undefined, headers = { 'Content-Type': 'application/json' }) {
   try {
+    console.log(url, JSON.stringify({ method, headers, body }));
     const response = await fetch(url, { method, headers, body });
     const responseData = await response.json();
 
@@ -94,7 +95,7 @@ export async function setDeliveryStatus(connectorName, connectorLine, messages) 
 }
 
 export async function retrieveFile(botId, fileId) {  
-  const data = { botId, botToken: BITRIX_BOT_TOKEN, fileId }
+  const data = { botId, botToken: BITRIX_BOT_TOKEN, fileId }  
   const bitrixResponse = await makeRequest('POST', `${BITRIX_URL}/rest/${BITRIX_USER_ID}/${BITRIX_USER_SECRET}/imbot.v2.File.download`, JSON.stringify(data));  
   const fileResponse = await fetch(bitrixResponse.result.downloadUrl);
   if (!fileResponse.ok) {
