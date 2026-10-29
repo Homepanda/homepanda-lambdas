@@ -1,13 +1,17 @@
 import { Hono } from 'hono';
 import { handle } from '@hono/aws-lambda';
 import { logger } from 'hono/logger';
+import { Upload } from '@aws-sdk/lib-storage';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-import { connectorActivate, refreshToken, setConnector } from './lib/bitrix.mjs';
+import { connectorActivate, refreshToken, retrieveFile, setConnector } from './lib/bitrix.mjs';
 import { getSecret, updateSecret } from './lib/secretManager.mjs';
 import { findConversationByChatId } from './lib/homepanda.mjs';
+import { buildOutboundS3Key } from './lib/helper.mjs';
 
 const sqsClient = new SQSClient({});
 const SQS_QUEUE_URL = process.env.SQS_QUEUE_URL;
+const MEDIA_BUCKET = process.env.S3_MEDIA_BUCKET;
 
 const app = new Hono().basePath('/bitrix');
 
@@ -112,7 +116,7 @@ app.post('/handler', async (c) => {
   return c.text('OK');
 });
 
-app.post('/handler/chat', async (c) => {  
+app.post('/handler/chat', async (c) => {
   const body = await c.req.parseBody();
   if (body.event === 'ONIMBOTV2MESSAGEADD') {
     const chatId = body['data[message][chatId]'];
@@ -136,6 +140,44 @@ app.post('/handler/chat', async (c) => {
           body: body['data[message][text]']
         }
       };
+      if (body['data[message][params][FILE_ID][0]']) {
+        const fileResponse = await retrieveFile(body['data[bot][id]'], body['data[message][params][FILE_ID][0]']);
+        const fileStream = fileResponse.body;
+        const contentType = fileResponse.headers.get('content-type') || 'application/octet-stream';
+        const s3 = new S3Client({});
+        const s3Key = buildOutboundS3Key(conversation.conversationId, body['data[message][uuid]']);
+        const s3Upload = new Upload({
+          client: s3,
+          params: {
+            Bucket: MEDIA_BUCKET,
+            Key: s3Key,
+            Body: fileStream,
+            ContentType: contentType
+          }
+        });
+        await s3Upload.done();        
+        envelope.payload = {
+          kind: 'media',
+          mediaType: 'document',
+          s3Key,          
+          caption: body['data[message][text]']
+        }
+        switch (true) {
+          case contentType.startsWith('image/'):
+            envelope.payload.mediaType = 'image';
+            break;
+          case contentType.startsWith('audio/'):
+            envelope.payload.mediaType = 'audio';
+            break;
+          case contentType.startsWith('video/'):
+            envelope.payload.mediaType = 'video';
+            break;
+          default:            
+            envelope.payload['filename'] = s3Key.split('/').at(-1);
+            break;
+        }
+        
+      }
     } catch (error) {
       return c.json({ error: 'CONVERSATION_NOT_BOUNDED' }, 500);
     }
