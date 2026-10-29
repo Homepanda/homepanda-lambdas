@@ -175,9 +175,9 @@ app.post('/handler/chat', async (c) => {
           default:            
             envelope.payload['filename'] = s3Key.split('/').at(-1);
             break;
-        }
-        
+        }        
       }
+      console.log(envelope);      
     } catch (error) {
       return c.json({ error: 'CONVERSATION_NOT_BOUNDED' }, 500);
     }
