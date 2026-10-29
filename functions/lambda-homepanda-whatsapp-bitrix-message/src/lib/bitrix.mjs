@@ -1,4 +1,4 @@
-import { getSecret } from "./secretManager.mjs";
+import { getSecret, updateSecret } from "./secretManager.mjs";
 
 const BITRIX_URL = process.env.BITRIX_URL;
 const BITRIX_CLIENT_ID = process.env.BITRIX_CLIENT_ID;
