@@ -127,7 +127,7 @@ app.post('/handler/chat', async (c) => {
         agentRef: `agent-${body['data[message][authorId]']}`,
         requestedAt: body['data[message][date]'],
         bitrix: {
-          chatId: body['data[chat][dialogId]'],
+          chatId: body['data[chat][id]'],
           crmEntityType: body['data[chat][entityLink][type]'],
           crmEntityId: body['data[chat][entityLink][id]'].replace(/[^0-9]+/g, '')
         },
