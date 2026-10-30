@@ -53,68 +53,6 @@ app.get('/refresh', async (c) => {
   c.status(404);
   return c.json({ 'error': 'Secret not found' });
 });
-app.post('/handler', async (c) => {
-  const { PLACEMENT, PLACEMENT_OPTIONS, event, data, auth } = await c.req.parseBody();
-  if (PLACEMENT === 'SETTING_CONNECTOR') {
-    const options = JSON.parse(PLACEMENT_OPTIONS);
-    const line = Number(options.LINE);
-
-    await connectorActivate('homepanda_whatsapp_connector', line, Number(options.ACTIVE_STATUS));
-    await setConnector('homepanda_whatsapp_connector', line, {
-      ID: `homepanda_whatsapp_${line}`,
-      URL_IM: 'https://wa.me/+393925262930',
-      NAME: 'WhatsApp Homepanda Support'
-    }
-    );
-  }
-  if (event === 'ONIMCONNECTORMESSAGEADD') {
-    console.log(event, data, auth);
-    for (const msg of data.MESSAGES) {
-      const externalChannel = msg.chat.id;
-      const conversation = await db.bitrixConversations.findByExternalChannel(externalChannel);
-      if (conversation) {
-        await sqs.sendMessage({
-          QueueUrl: process.env.SQS_WHATSAPP_OUTBOUND,
-          MessageBody: JSON.stringify({
-            clientMessageId: uuidv7(),
-            toPhone: conversation.contactPhone,
-            conversationId: conversation.conversationId,
-            origin: 'bitrix24',
-            agentRef: String(msg.message.user_id),
-            payload: {
-              kind: 'text',
-              body: msg.message.text
-            }
-          }),
-          MessageGroupId: conversation.contactPhone,
-          MessageDeduplicationId: `bitrix:${msg.im.message_id}`
-        });
-      }
-      const message = [{
-        im: msg.im,
-        message: {
-          id: [`ext-msg-${uuidv7()}`],
-          date: Math.floor(Date.now() / 1000)
-        },
-        chat: msg.chat
-      }];
-
-      await setDeliveryStatus('homepanda_whatsapp_connector', data.LINE, message);
-    }
-  }
-  if (event === 'ONIMCONNECTORDIALOGSTART') {
-    console.log(event, data, auth);
-    const { LINE, SESSION_ID, CHAT_ID, USER_CODE } = data;
-
-    console.log('Nuova conversazione:', {
-      lineId: LINE,
-      sessionId: SESSION_ID,
-      chatId: CHAT_ID,
-      userCode: USER_CODE
-    });
-  }
-  return c.text('OK');
-});
 
 app.post('/handler/chat', async (c) => {
   const body = await c.req.parseBody();
@@ -176,8 +114,7 @@ app.post('/handler/chat', async (c) => {
             envelope.payload['filename'] = s3Key.split('/').at(-1);
             break;
         }        
-      }
-      console.log(envelope);      
+      }          
     } catch (error) {
       return c.json({ error: 'CONVERSATION_NOT_BOUNDED' }, 500);
     }

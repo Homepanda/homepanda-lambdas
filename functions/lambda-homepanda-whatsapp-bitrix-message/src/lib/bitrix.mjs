@@ -9,8 +9,7 @@ const BITRIX_CLIENT_ID = process.env.BITRIX_CLIENT_ID;
 const BITRIX_CLIENT_SECRET = process.env.BITRIX_CLIENT_SECRET;
 
 async function makeRequest(method, url, body = undefined, headers = { 'Content-Type': 'application/json' }) {
-  try {
-    console.log(url, JSON.stringify({ method, headers, body }));
+  try {    
     const response = await fetch(url, { method, headers, body });
     const responseData = await response.json();
 
