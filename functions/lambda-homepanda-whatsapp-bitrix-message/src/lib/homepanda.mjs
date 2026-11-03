@@ -38,15 +38,18 @@ async function makeRequest(method, url, body = undefined, headers = { 'Content-T
 	}
 }
 
+/**
+  * Conversation Example 
+  * {
+  *   conversationId: "01a0e8db-74d1-75d8-a175-dcaaa89f4540",
+  *   waPhoneNumberId: "1285755457961340",
+  *   toPhone: "+393207835392", 
+  *   chatId: "630641",
+  *   entityType: "LEAD",
+  *   entityId: "84255"
+  * }
+ */
 export async function findConversationByChatId(chatId) {
-	return {
-		conversationId: "01a0e8db-74d1-75d8-a175-dcaaa89f4540",
-		waPhoneNumberId: "1285755457961340",
-		toPhone: "+393207835392",
-		chatId: "630641",
-		entityType: "LEAD",
-		entityId: "84255"
-	}
-  const response = await makeRequest('GET', `${HOMEPANDA_WHATSAPP_URL}/bitrix/chats/${chatId}`);
+	const response = await makeRequest('GET', `${HOMEPANDA_WHATSAPP_URL}/bitrix/chats/${chatId}`);
   return response;
 }
