@@ -15,8 +15,6 @@ export class HttpError extends Error {
 async function makeRequest(method, url, body = undefined, headers = { 'Content-Type': 'application/json' }) {
 	try {
 		const response = await fetch(url, { method, headers, body });
-		const responseData = await response.json();
-
 		if (!response.ok) {      
       let errorBody;            
       try {
@@ -30,7 +28,7 @@ async function makeRequest(method, url, body = undefined, headers = { 'Content-T
         errorBody
       );
     }
-
+    const responseData = await response.json();
 		return responseData;
 	} catch (error) {
 		console.error(`Errore durante la chiamata ${method}: `, error);

@@ -12,7 +12,7 @@ import { buildOutboundS3Key } from './lib/helper.mjs';
 const sqsClient = new SQSClient({});
 const SQS_QUEUE_URL = process.env.SQS_QUEUE_URL;
 const MEDIA_BUCKET = process.env.S3_MEDIA_BUCKET;
-const SQS_BITRIX_QUEUE_URL = process.env.SQS_BITRIX_QUEUE_URL;
+const SQS_QUEUE_BITRIX_URL = process.env.SQS_QUEUE_BITRIX_URL;
 
 const app = new Hono().basePath('/bitrix');
 
@@ -135,7 +135,7 @@ app.post('/handler/chat', async (c) => {
           }
           await sqsClient.send(
             new SendMessageCommand({
-              QueueUrl: SQS_BITRIX_QUEUE_URL,
+              QueueUrl: SQS_QUEUE_BITRIX_URL,
               MessageBody: JSON.stringify(envelope),
               MessageGroupId: envelope.chatId,
               MessageDeduplicationId: `${envelope.messageId}_${envelope.chatId}`,
