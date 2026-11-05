@@ -130,15 +130,16 @@ app.post('/handler/chat', async (c) => {
               body: "Questa chat non è collegata al filo WhatsApp attivo. Usa la chat della scheda da cui è partito l'ultimo template, oppure invia un template da questa scheda.",
               mediaS3Key: null,
               occurredAt: body['data[message][date]'],
-              chatId
+              chatId: chatId
             }
           }
+          console.log(envelope);
           await sqsClient.send(
             new SendMessageCommand({
               QueueUrl: SQS_QUEUE_BITRIX_URL,
               MessageBody: JSON.stringify(envelope),
-              MessageGroupId: envelope.chatId,
-              MessageDeduplicationId: `${envelope.messageId}_${envelope.chatId}`,
+              MessageGroupId: chatId,
+              MessageDeduplicationId: `${envelope.messageId}_${chatId}`,
             }),
           );
         }
