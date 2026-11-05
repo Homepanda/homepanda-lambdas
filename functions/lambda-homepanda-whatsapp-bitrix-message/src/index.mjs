@@ -2,16 +2,17 @@ import { Hono } from 'hono';
 import { handle } from '@hono/aws-lambda';
 import { logger } from 'hono/logger';
 import { Upload } from '@aws-sdk/lib-storage';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-import { connectorActivate, refreshToken, retrieveFile, setConnector } from './lib/bitrix.mjs';
+import { refreshToken, retrieveFile } from './lib/bitrix.mjs';
 import { getSecret, updateSecret } from './lib/secretManager.mjs';
-import { findConversationByChatId } from './lib/homepanda.mjs';
+import { findConversationByChatId, HttpError } from './lib/homepanda.mjs';
 import { buildOutboundS3Key } from './lib/helper.mjs';
 
 const sqsClient = new SQSClient({});
 const SQS_QUEUE_URL = process.env.SQS_QUEUE_URL;
 const MEDIA_BUCKET = process.env.S3_MEDIA_BUCKET;
+const SQS_BITRIX_QUEUE_URL = process.env.SQS_BITRIX_QUEUE_URL;
 
 const app = new Hono().basePath('/bitrix');
 
@@ -93,11 +94,11 @@ app.post('/handler/chat', async (c) => {
             ContentType: contentType
           }
         });
-        await s3Upload.done();        
+        await s3Upload.done();
         envelope.payload = {
           kind: 'media',
           mediaType: 'document',
-          s3Key,          
+          s3Key,
           caption: body['data[message][text]']
         }
         switch (true) {
@@ -110,12 +111,38 @@ app.post('/handler/chat', async (c) => {
           case contentType.startsWith('video/'):
             envelope.payload.mediaType = 'video';
             break;
-          default:            
+          default:
             envelope.payload['filename'] = s3Key.split('/').at(-1);
             break;
-        }        
-      }          
+        }
+      }
     } catch (error) {
+      if (error instanceof HttpError) {
+        if (error.status === 404) {
+          envelope = {
+            event: 'CREATE',
+            type: 'MESSAGE',
+            data: {
+              messageId: body['data[message][uuid]'],
+              conversationId: null,
+              contactPhone: chatId,
+              contactName: null,
+              body: "Questa chat non è collegata al filo WhatsApp attivo. Usa la chat della scheda da cui è partito l'ultimo template, oppure invia un template da questa scheda.",
+              mediaS3Key: null,
+              occurredAt: body['data[message][date]'],
+              chatId
+            }
+          }
+          await sqsClient.send(
+            new SendMessageCommand({
+              QueueUrl: SQS_BITRIX_QUEUE_URL,
+              MessageBody: JSON.stringify(envelope),
+              MessageGroupId: envelope.chatId,
+              MessageDeduplicationId: `${envelope.messageId}_${envelope.chatId}`,
+            }),
+          );
+        }
+      }
       return c.json({ error: 'CONVERSATION_NOT_BOUNDED' }, 500);
     }
     try {

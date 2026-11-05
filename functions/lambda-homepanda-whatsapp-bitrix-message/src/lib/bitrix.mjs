@@ -92,7 +92,6 @@ export async function setDeliveryStatus(connectorName, connectorLine, messages) 
   const response = await makeRequest('POST', `${BITRIX_URL}/rest/bitrix.imconnector.send.status.delivery`, JSON.stringify(data));
   return response;
 }
-
 export async function retrieveFile(botId, fileId) {  
   const data = { botId, botToken: BITRIX_BOT_TOKEN, fileId }  
   const bitrixResponse = await makeRequest('POST', `${BITRIX_URL}/rest/${BITRIX_USER_ID}/${BITRIX_USER_SECRET}/imbot.v2.File.download`, JSON.stringify(data));  
