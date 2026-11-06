@@ -119,7 +119,7 @@ for name in parts:
 
     build = entry.get("build") or {}
     strategy = build.get("strategy")
-    if strategy not in ("nodejs-zip-yarn-classic", "nodejs-zip-npm"):
+    if strategy not in ("nodejs-zip-yarn-classic", "nodejs-zip-npm", "nodejs-zip"):
         sys.stderr.write(f"Strategia non implementata: {strategy}\n")
         sys.exit(1)
 
@@ -136,14 +136,20 @@ for name in parts:
             sys.exit(1)
 
     toolchain = build.get("toolchain") or {}
-    for field in ("language", "version", "packageManager", "packageManagerVersion"):
+    required_toolchain = ["language", "version"]
+    if strategy != "nodejs-zip":
+        required_toolchain.extend(["packageManager", "packageManagerVersion"])
+    for field in required_toolchain:
         if not toolchain.get(field):
             sys.stderr.write(f"{name}: toolchain.{field} mancante\n")
             sys.exit(1)
     if toolchain.get("language") != "nodejs":
         sys.stderr.write(f"Linguaggio non implementato: {toolchain.get('language')}\n")
         sys.exit(1)
-    package_manager = toolchain.get("packageManager")
+    package_manager = toolchain.get("packageManager") or ""
+    if strategy == "nodejs-zip" and package_manager:
+        sys.stderr.write(f"{name}: nodejs-zip non installa dipendenze.\n")
+        sys.exit(1)
     if strategy == "nodejs-zip-yarn-classic" and package_manager != "yarn-classic":
         sys.stderr.write(f"{name}: packageManager inatteso per strategy yarn: {package_manager}\n")
         sys.exit(1)
@@ -192,7 +198,7 @@ for name in parts:
                 "FUNCTION_ARTIFACT": artifact,
                 "NODE_VERSION": toolchain["version"],
                 "PACKAGE_MANAGER": package_manager,
-                "PACKAGE_MANAGER_VERSION": toolchain["packageManagerVersion"],
+                "PACKAGE_MANAGER_VERSION": toolchain.get("packageManagerVersion") or "",
                 "YARN_VERSION": toolchain["packageManagerVersion"] if package_manager == "yarn-classic" else "",
                 "NPM_VERSION": toolchain["packageManagerVersion"] if package_manager == "npm" else "",
                 "DIST_DIR": str(root / "dist"),

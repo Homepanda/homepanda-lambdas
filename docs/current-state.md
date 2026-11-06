@@ -1,6 +1,6 @@
 # Stato attuale
 
-Aggiornato il 2026-10-27. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler` e `lambda-idealista-ads-handler`. Le altre Lambda non sono state inventariate.
+Aggiornato il 2026-11-06. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler`, `lambda-idealista-ads-handler`, `lambda-homepanda-esignature-create-envelope` e `lambda-homepanda-esignature-handle-signature`. Le altre Lambda non sono state inventariate.
 
 ## Repository
 
@@ -165,3 +165,16 @@ Lettura con il profilo `default`, identità `arn:aws:iam::247981707334:user/user
 In Git è entrato il sorgente di quello zip, senza `node_modules` e senza `.vscode`: `index.mjs`, `package.json`, `package-lock.json`, `services/comuni.csv`, `services/findCap.mjs`, `services/homepanda.mjs`, `services/idealista.mjs`, `services/payload.mjs`, `services/redis.mjs`. Runtime AWS `nodejs22.x`, handler `index.handler`, architettura `x86_64`, VPC `vpc-0b801a60`. Event source mapping abilitato su `arn:aws:sqs:eu-central-1:247981707334:IdealistaAds`, batch size 1, invocazione su `$LATEST`.
 
 Variabili d'ambiente presenti, solo nomi: `HOMEPANDA_PROPERTY_SERVICE_URL`, `IDEALISTA_AUTHORIZATION`, `IDEALISTA_CONTACT_ID_HP`, `IDEALISTA_CONTACT_ID_RLB`, `IDEALISTA_FEEDKEY`, `IDEALISTA_FEEDKEY_HP`, `IDEALISTA_FEEDKEY_RLB_EUR`, `IDEALISTA_FEEDKEY_RLB_OST`, `IDEALISTA_FEEDKEY_RLB_PAR`, `IDEALISTA_URL`, `REDIS_HOST`, `REDIS_PORT`.
+
+## lambda-homepanda-esignature-create-envelope e lambda-homepanda-esignature-handle-signature
+
+Lettura con il profilo `default`, identità `arn:aws:iam::247981707334:user/user-deploy`, regione `eu-central-1`, il 2026-11-06. Nessuna scrittura. I due zip distribuiti sono identici: 295 byte, un solo file `index.mjs`. Lo SHA-256 in base64 coincide con `CodeSha256` `b3QWX8x/00A4HrIdVuuueY7EqOUAvTtgddGRSSbMx2w=` su entrambe le funzioni.
+
+In Git è entrato quel sorgente. È il blueprint della console: `handler` risponde `200` con `Hello from Lambda!`. Non ci sono `package.json`, dipendenze, variabili d'ambiente, VPC, event source mapping, resource policy, function URL, alias o versioni pubblicate. L'invocazione osservata è su `$LATEST`. Il log group non esiste ancora.
+
+| Funzione | LastModified | Ruolo |
+| --- | --- | --- |
+| `lambda-homepanda-esignature-create-envelope` | `2026-11-06T13:24:42.465+0000` | `lambda-homepanda-esignature-create-envelope-role-0h1b659p` |
+| `lambda-homepanda-esignature-handle-signature` | `2026-11-06T13:26:35.701+0000` | `lambda-homepanda-esignature-handle-signature-role-jpopr6e2` |
+
+Runtime `nodejs24.x`, handler `index.handler`, architettura `x86_64`, memoria 128 MB, timeout 3 s. La build usa la strategia `nodejs-zip`: impacchetta solo `index.mjs`, senza installare dipendenze. Il pin di `node --check` è Node 24.11.0, lo stesso delle altre funzioni `nodejs24.x`. Lo zip ricostruito non è usato come prova di identicità con il pacchetto in produzione e non viene pubblicato.

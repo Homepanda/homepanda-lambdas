@@ -159,6 +159,52 @@
         "REDIS_HOST",
         "REDIS_PORT"
       ]
+    },
+    {
+      "logicalName": "homepanda-esignature-create-envelope",
+      "functionName": "lambda-homepanda-esignature-create-envelope",
+      "directory": "functions/lambda-homepanda-esignature-create-envelope",
+      "packageType": "Zip",
+      "runtime": "nodejs24.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "accountId": "247981707334",
+      "region": "eu-central-1",
+      "build": {
+        "script": "build.sh",
+        "sourceRoot": "src",
+        "strategy": "nodejs-zip",
+        "artifact": "homepanda-esignature-create-envelope.zip",
+        "toolchain": {
+          "language": "nodejs",
+          "version": "24.11.0",
+          "pinScope": "function"
+        }
+      },
+      "environmentVariableNames": []
+    },
+    {
+      "logicalName": "homepanda-esignature-handle-signature",
+      "functionName": "lambda-homepanda-esignature-handle-signature",
+      "directory": "functions/lambda-homepanda-esignature-handle-signature",
+      "packageType": "Zip",
+      "runtime": "nodejs24.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "accountId": "247981707334",
+      "region": "eu-central-1",
+      "build": {
+        "script": "build.sh",
+        "sourceRoot": "src",
+        "strategy": "nodejs-zip",
+        "artifact": "homepanda-esignature-handle-signature.zip",
+        "toolchain": {
+          "language": "nodejs",
+          "version": "24.11.0",
+          "pinScope": "function"
+        }
+      },
+      "environmentVariableNames": []
     }
   ]
 }

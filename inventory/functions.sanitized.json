@@ -1,7 +1,7 @@
 {
   "scope": "partial",
-  "note": "lambda-immobiliare-ads-handler, lambda-immobiliare-leads-handler, lambda-homepanda-whatsapp-bitrix-message, lambda-wikicasa-ads-handler e lambda-idealista-ads-handler. Non e l'inventario delle 30 funzioni.",
-  "collectedAt": "2026-10-27",
+  "note": "lambda-immobiliare-ads-handler, lambda-immobiliare-leads-handler, lambda-homepanda-whatsapp-bitrix-message, lambda-wikicasa-ads-handler, lambda-idealista-ads-handler, lambda-homepanda-esignature-create-envelope e lambda-homepanda-esignature-handle-signature. Non e l'inventario delle 30 funzioni. Le prime cinque sono state lette il 2026-10-27; le due esignature il 2026-11-06.",
+  "collectedAt": "2026-11-06",
   "accountId": "247981707334",
   "region": "eu-central-1",
   "functions": [
@@ -348,6 +348,76 @@
       "tags": {},
       "tracingMode": "PassThrough",
       "snapStart": "None"
+    },
+    {
+      "functionName": "lambda-homepanda-esignature-create-envelope",
+      "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-homepanda-esignature-create-envelope",
+      "packageType": "Zip",
+      "runtime": "nodejs24.x",
+      "handler": "index.handler",
+      "architectures": [
+        "x86_64"
+      ],
+      "memorySize": 128,
+      "timeout": 3,
+      "ephemeralStorage": 512,
+      "codeSize": 295,
+      "codeSha256": "b3QWX8x/00A4HrIdVuuueY7EqOUAvTtgddGRSSbMx2w=",
+      "description": "",
+      "role": "arn:aws:iam::247981707334:role/service-role/lambda-homepanda-esignature-create-envelope-role-0h1b659p",
+      "layers": [],
+      "vpc": null,
+      "reservedConcurrency": null,
+      "version": "$LATEST",
+      "publishedVersionCount": 0,
+      "aliases": [],
+      "revisionId": "af68016f-c50a-458d-bc57-227ea4956b14",
+      "lastModified": "2026-11-06T13:24:42.465+0000",
+      "state": "Active",
+      "lastUpdateStatus": "Successful",
+      "environmentVariableNames": [],
+      "eventSourceMappings": [],
+      "resourcePolicy": null,
+      "eventInvokeConfig": null,
+      "logGroup": null,
+      "tags": {},
+      "tracingMode": "PassThrough",
+      "snapStart": "None"
+    },
+    {
+      "functionName": "lambda-homepanda-esignature-handle-signature",
+      "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-homepanda-esignature-handle-signature",
+      "packageType": "Zip",
+      "runtime": "nodejs24.x",
+      "handler": "index.handler",
+      "architectures": [
+        "x86_64"
+      ],
+      "memorySize": 128,
+      "timeout": 3,
+      "ephemeralStorage": 512,
+      "codeSize": 295,
+      "codeSha256": "b3QWX8x/00A4HrIdVuuueY7EqOUAvTtgddGRSSbMx2w=",
+      "description": "",
+      "role": "arn:aws:iam::247981707334:role/service-role/lambda-homepanda-esignature-handle-signature-role-jpopr6e2",
+      "layers": [],
+      "vpc": null,
+      "reservedConcurrency": null,
+      "version": "$LATEST",
+      "publishedVersionCount": 0,
+      "aliases": [],
+      "revisionId": "819ed781-34c5-4756-be93-393c5f65b9ab",
+      "lastModified": "2026-11-06T13:26:35.701+0000",
+      "state": "Active",
+      "lastUpdateStatus": "Successful",
+      "environmentVariableNames": [],
+      "eventSourceMappings": [],
+      "resourcePolicy": null,
+      "eventInvokeConfig": null,
+      "logGroup": null,
+      "tags": {},
+      "tracingMode": "PassThrough",
+      "snapStart": "None"
     }
   ],
   "unverified": [
@@ -358,6 +428,7 @@
     "Policy IAM del ruolo di lambda-immobiliare-leads-handler non letta.",
     "Producer delle code ImmobiliareLeads, ImmobiliareFondoCasaLeads, ImmobiliareNewMessage, RelabImmobiliareLeads e RelabImmobiliareNewMessage non verificati.",
     "Policy IAM del ruolo di lambda-homepanda-whatsapp-bitrix-message non letta.",
-    "La variabile SQS_WHATSAPP_OUTBOUND è usata nel sorgente di lambda-homepanda-whatsapp-bitrix-message ma non risulta in configurazione."
+    "La variabile SQS_WHATSAPP_OUTBOUND è usata nel sorgente di lambda-homepanda-whatsapp-bitrix-message ma non risulta in configurazione.",
+    "Policy IAM dei ruoli lambda-homepanda-esignature-create-envelope-role-0h1b659p e lambda-homepanda-esignature-handle-signature-role-jpopr6e2 non letta."
   ]
 }

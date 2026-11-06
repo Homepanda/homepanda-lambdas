@@ -1,6 +1,6 @@
 # Decisioni
 
-Ambito attuale: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler` e `lambda-idealista-ads-handler`. Non c’è un pilota: Plan seleziona ogni cartella sotto `functions/` mappata in `functions.json`.
+Ambito attuale: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler`, `lambda-idealista-ads-handler`, `lambda-homepanda-esignature-create-envelope` e `lambda-homepanda-esignature-handle-signature`. Non c’è un pilota: Plan seleziona ogni cartella sotto `functions/` mappata in `functions.json`.
 
 ## Repository
 
@@ -30,13 +30,21 @@ functions/lambda-idealista-ads-handler/
   build.sh
   src/
   tests/
+functions/lambda-homepanda-esignature-create-envelope/
+  build.sh
+  src/
+  tests/
+functions/lambda-homepanda-esignature-handle-signature/
+  build.sh
+  src/
+  tests/
 ```
 
 `functions.json` separa `logicalName` e `functionName`. Il nome AWS, l'account e la regione stanno nel manifest e non si deducono dalla cartella. Non contiene valori di ambiente.
 
 ## Build
 
-Un solo `buildspec.yml` in radice, senza `runtime-versions`. La build legge `release-targets.json` dello stage Plan; `BUILD_TARGETS` resta solo override manuale. Ogni funzione ha la propria ricetta in `build.sh` (Node 18.20.8 per Wikicasa, Node 22.14.0 per ads e Idealista, Node 24.11.0 per leads e whatsapp-bitrix). Le strategie supportate sono `nodejs-zip-yarn-classic` e `nodejs-zip-npm`. I pin non sono condivisi. Python e container non sono implementati. Più target producono zip distinti e `dist/release-manifest.json` con `releases[]`.
+Un solo `buildspec.yml` in radice, senza `runtime-versions`. La build legge `release-targets.json` dello stage Plan; `BUILD_TARGETS` resta solo override manuale. Ogni funzione ha la propria ricetta in `build.sh` (Node 18.20.8 per Wikicasa, Node 22.14.0 per ads e Idealista, Node 24.11.0 per leads, whatsapp-bitrix e le due funzioni esignature). Le strategie supportate sono `nodejs-zip-yarn-classic`, `nodejs-zip-npm` e `nodejs-zip`. `nodejs-zip` impacchetta i sorgenti senza `package.json` e senza installare dipendenze. I pin non sono condivisi. Python e container non sono implementati. Più target producono zip distinti e `dist/release-manifest.json` con `releases[]`.
 
 ## Codice di lambda-wikicasa-ads-handler
 
@@ -49,6 +57,12 @@ Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-10-12. `C
 Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-10-12. `CodeSha256` letto da AWS, `X8uDXaqZIxdTumX07bdhiFQYUeoX5WYWBSijAhNS3oU=`, coincide con lo zip scaricato.
 
 `package.json` resta quello del pacchetto con lockfile npm (`package-lock.json`). Runtime atteso `nodejs22.x`, handler `index.handler`, architettura `x86_64`.
+
+## Codice di lambda-homepanda-esignature-create-envelope e lambda-homepanda-esignature-handle-signature
+
+Si versiona il sorgente estratto dai pacchetti distribuiti il 2026-11-06. I due zip sono identici. `CodeSha256` letto da AWS, `b3QWX8x/00A4HrIdVuuueY7EqOUAvTtgddGRSSbMx2w=`, coincide con entrambi gli zip scaricati.
+
+Il pacchetto contiene solo `index.mjs`, il blueprint della console. Non si aggiunge un `package.json` che in AWS non c'è. Runtime atteso `nodejs24.x`, handler `index.handler`, architettura `x86_64`. La ricetta `nodejs-zip` produce uno zip con solo `index.mjs`.
 
 ## Codice di questa funzione
 
