@@ -1,0 +1,450 @@
+{
+  "payload": {
+    "property": {
+      "property_id": 3,
+      "agent_id": 3,
+      "ref_agent_id": 3,
+      "agency_id": 1,
+      "seller_id": 1,
+      "buyer_id": null,
+      "url_rewrite": "",
+      "active": 0,
+      "publish_date": "1979-07-01 11:53:08",
+      "sale_date": "1999-06-24 17:39:14",
+      "status": {
+        "status_id": 5,
+        "status_type": "review_pending",
+        "status_name": "Da approvare"
+      },
+      "property_quality": {
+        "property_quality_id": 3,
+        "property_quality_name": "Alta"
+      },
+      "area_quality": {
+        "area_quality_id": 1,
+        "area_quality_name": "Bassa"
+      },
+      "success_rate": 6,
+      "title": "unde aperiam ipsam unde quos",
+      "description": "consequatur autem necessitatibus nostrum sit",
+      "description_short": "dolor mollitia autem qui doloribus",
+      "country": {
+        "country_id": 1,
+        "country_name": "Italy"
+      },
+      "province": {
+        "province_id": 1,
+        "province_name": "Milano"
+      },
+      "city": {
+        "city_id": 1,
+        "city_name": "Milano"
+      },
+      "district": null,
+      "address": "69414 Kulas Junction\nJaydonport, SC 32545-3798",
+      "latitude": 45.474404748148345,
+      "longitude": 9.16960668121096,
+      "category": {
+        "category_id": 1,
+        "category_name": "Residenziale"
+      },
+      "typology": {
+        "typology_id": 1,
+        "typology_name": "Appartamento",
+        "category": {
+          "category_id": 1,
+          "category_name": "Residenziale"
+        }
+      },
+      "contract": {
+        "contract_id": 2,
+        "contract_name": "mollitia"
+      },
+      "instruct_start": "2015-08-28 11:09:14",
+      "instruct_stop": "2007-11-10 20:01:27",
+      "instruct_typology": {
+        "instruct_typology_id": 1,
+        "instruct_typology_name": "Upfront"
+      },
+      "instruct_price": "27.69",
+      "instruct_price_box": "38.02",
+      "price": {
+        "price_id": 2,
+        "price": 1029635.71,
+        "date": "2005-01-22 23:31:35"
+      },
+      "price_box": null,
+      "price_sale": 46783669,
+      "box_sold_separately": 0,
+      "expense_apartment": 3,
+      "expense_heating": 3,
+      "expense_other": 8,
+      "rent_ransom": 1,
+      "property_income": 1,
+      "category_registry": {
+        "category_registry_id": 13,
+        "category_registry_name": "C/2"
+      },
+      "surface": 185,
+      "floor": {
+        "floor_id": 17,
+        "floor_name": "7"
+      },
+      "floor_tot": 6,
+      "rooms": 5,
+      "baths": 1,
+      "kitchen_type": {
+        "kitchen_type_id": 3,
+        "kitchen_type_name": "Cucinotto"
+      },
+      "current_state": {
+        "current_state_id": 1,
+        "current_state_name": "Libero"
+      },
+      "conservative_state": {
+        "conservative_state_id": 4,
+        "conservative_state_name": "Da ristrutturare"
+      },
+      "garden": 1,
+      "garden_mq": null,
+      "garden_type": null,
+      "box": {
+        "box_id": 1,
+        "box_name": "Singolo"
+      },
+      "parking_places": 4,
+      "balconies": 3,
+      "terrace": 2,
+      "cellar": 0,
+      "mansard": 1,
+      "elevator": 1,
+      "exposition": {
+        "exposition_id": 2,
+        "exposition_name": "Esterna"
+      },
+      "free_sides": {
+        "free_sides_id": 1,
+        "free_sides_name": "1"
+      },
+      "interior_decoration": {
+        "interior_decoration_id": 3,
+        "interior_decoration_name": "Solo cucina arredata"
+      },
+      "fixtures_type": {
+        "fixtures_type_id": 4,
+        "fixtures_type_name": "Doppio Vetro/Legno"
+      },
+      "property_type": {
+        "property_type_id": 4,
+        "property_type_name": "Economico"
+      },
+      "construction_year": "1974-05-24",
+      "renovation_year": "1989-02-07",
+      "heating_type": {
+        "heating_type_id": 2,
+        "heating_type_name": "Centralizzato"
+      },
+      "heating_typology": null,
+      "heating_supply_type": {
+        "heating_supply_type_id": 3,
+        "heating_supply_type_name": "Aria"
+      },
+      "air_conditioning": {
+        "air_conditioning_id": 2,
+        "air_conditioning_name": "Assente"
+      },
+      "energy_class": {
+        "energy_class_id": 10,
+        "energy_class_name": "D"
+      },
+      "energy_consumption": null,
+      "property_typology": null,
+      "concierge": 0,
+      "concierge_type": null,
+      "security_door": 0,
+      "alarm_system": 1,
+      "electric_gate": 1,
+      "videophone": 0,
+      "fiber": 0,
+      "fireplace": 0,
+      "hydromassage": 0,
+      "visit_referent": "Abe Rau",
+      "visit_referent_phone": "3203203200",
+      "note": "in in sint saepe animi",
+      "commission_seller": 70855,
+      "commission_buyer": 221,
+      "commission_agent": 31152,
+      "antimoney_laundering_seller": false,
+      "antimoney_laundering_buyer": true,
+      "exclude_stats": true,
+      "invoice_date": "1979-11-21",
+      "is_cashed_seller": true,
+      "is_cashed_buyer": true,
+      "note_internal": "nesciunt qui quam consequatur maiores",
+      "provider": "HP",
+      "expected_type": "RATE",
+      "expected_type_value": 8572.3,
+      "expected": 8007,
+      "expected_publish_date": null,
+      "jurisdiction_date": "2010-10-13",
+      "has_details": true,
+      "has_description": true,
+      "has_photos": false,
+      "photos": [
+        {
+          "photo_id": 5,
+          "photo_path": "path/of/photo/647044fe6d56e8fbdfd43392b20efeec.jpg",
+          "photo_label": "esse deleniti repellendus rem omnis",
+          "photo_thumb": "dd09c9a49f3a4ab3318f1e603f79f2eb",
+          "photo_order": 0,
+          "photo_main": 1,
+          "is_ai": false
+        },
+        {
+          "photo_id": 4,
+          "photo_path": "path/of/photo/3d2715fc6a525ebde89d14a8f9dc9d68.jpg",
+          "photo_label": "repudiandae quia aliquid facere rerum",
+          "photo_thumb": "be3a8526c0ec8bfc1a04064355255b3e",
+          "photo_order": 1,
+          "photo_main": 0,
+          "is_ai": true
+        },
+        {
+          "photo_id": 6,
+          "photo_path": "path/of/photo/3fd271bd2e0428a01aee3f64df12d7e7.jpg",
+          "photo_label": "ut eum ut voluptas similique",
+          "photo_thumb": "38ca1f9345b6759cfed0d8f756517229",
+          "photo_order": 2,
+          "photo_main": 0,
+          "is_ai": false
+        }
+      ],
+      "media": [
+        {
+          "media_id": 4,
+          "media_path": "path/of/media/13248341af8ebb9b00bd131e10f24f07.jpg",
+          "media_label": "dicta quofuga voluptatem natus",
+          "media_type": "VIRTUAL_TOUR",
+          "media_thumb": "e722498809c877f5342f74985b11eb0b"
+        },
+        {
+          "media_id": 5,
+          "media_path": "path/of/media/afa5f186aaba2bc6852140152bfeeabb.jpg",
+          "media_label": "nisi qui aperiam recusandae ut",
+          "media_type": "PLANIMETRY",
+          "media_thumb": "d3ce0c3bbef3b38ab43d4f8e9025bc6a"
+        },
+        {
+          "media_id": 6,
+          "media_path": "path/of/media/a7ba2743a64a4dc81ab4d34c80e8fd0c.jpg",
+          "media_label": "ut aut quo voluptate at",
+          "media_type": "VIDEO",
+          "media_thumb": "37adcd0e755297d5ee2fd245d3ffedc3"
+        }
+      ],
+      "links": [],
+      "documents": [
+        {
+          "document_id": 4,
+          "property_id": 3,
+          "document_path": "path/of/document/37ee74f141212a3dec61f090979bfc14.pdf",
+          "document_label": "libero dolorem nihil qui illo",
+          "document_is_digitally_signed": false,
+          "document_type": {
+            "document_type_id": 14,
+            "document_type_name": "Modulo antiriciclaggio firmato",
+            "document_type_description": "Modulo antiriciclaggio firmato acquirente",
+            "document_type_required": 1,
+            "document_type_context": "BUYER",
+            "document_type_contract_id": 1,
+            "document_type_esignature_enabled": false,
+            "document_type_esignature_workflow": null
+          },
+          "created_at": "1974-08-02T06:43:25.000000Z",
+          "signature_workflow": null
+        },
+        {
+          "document_id": 6,
+          "property_id": 3,
+          "document_path": "path/of/document/faa8cdd749056f9ec64faaecc8741d0c.pdf",
+          "document_label": "dignissimos sunt minima quia magnam",
+          "document_is_digitally_signed": false,
+          "document_type": {
+            "document_type_id": 16,
+            "document_type_name": "Caparra confirmatoria",
+            "document_type_description": "Caparra confirmatoria",
+            "document_type_required": 0,
+            "document_type_context": "BUYER",
+            "document_type_contract_id": 1,
+            "document_type_esignature_enabled": false,
+            "document_type_esignature_workflow": null
+          },
+          "created_at": "1994-06-21T11:37:56.000000Z",
+          "signature_workflow": null
+        },
+        {
+          "document_id": 39,
+          "property_id": 3,
+          "document_path": "gODn5hgKUALNQHqmywLVKJULXlEUuBzf19FoHzvT.pdf",
+          "document_label": "Incarico di mediazione firmato",
+          "document_is_digitally_signed": true,
+          "document_type": {
+            "document_type_id": 1,
+            "document_type_name": "Incarico di mediazione firmato",
+            "document_type_description": "Incarico di mediazione firmato",
+            "document_type_required": 1,
+            "document_type_context": "SELLER",
+            "document_type_contract_id": 1,
+            "document_type_esignature_enabled": true,
+            "document_type_esignature_workflow": "SignatureWorkflowSeller"
+          },
+          "created_at": "2026-11-03T13:57:35.000000Z",
+          "signature_workflow": null
+        },
+        {
+          "document_id": 38,
+          "property_id": 3,
+          "document_path": "4f3GSrEz8HIckUr4UcJraAXj8JsRKsmRBMNop8YL.pdf",
+          "document_label": "Incarico di mediazione firmato",
+          "document_is_digitally_signed": false,
+          "document_type": {
+            "document_type_id": 1,
+            "document_type_name": "Incarico di mediazione firmato",
+            "document_type_description": "Incarico di mediazione firmato",
+            "document_type_required": 1,
+            "document_type_context": "SELLER",
+            "document_type_contract_id": 1,
+            "document_type_esignature_enabled": true,
+            "document_type_esignature_workflow": "SignatureWorkflowSeller"
+          },
+          "created_at": "2026-10-28T15:36:56.000000Z",
+          "signature_workflow": {
+            "id": "a31c7d8e-5eaf-4e20-a6b2-58fb067b5c0a",
+            "type": "App\\Workflows\\Signature\\SignatureWorkflowSeller",
+            "status": "COMPLETED",
+            "payload": "{\"documentId\":38,\"propertyId\":3,\"recipients\":[{\"name\":\"Gianni\",\"surname\":\"Ciccarelli\",\"email\":\"gianni.ciccarelli@gmail.com\",\"phone\":\"3488730465\"}],\"signers\":[]}",
+            "current_step": 2,
+            "current_step_attempt": 1,
+            "created_at": "2026-10-31T06:20:08.000000Z",
+            "updated_at": "2026-11-03T13:57:36.000000Z",
+            "steps": [
+              {
+                "id": 1,
+                "workflow_id": "a31c7d8e-5eaf-4e20-a6b2-58fb067b5c0a",
+                "name": "Preparazione e invio documento per firma",
+                "step": 1,
+                "status": "SUCCESS",
+                "response_status": "{\"status\":\"SUCCESS\",\"EnvelopeId\":\"45fd01ce-1234-4792-1234-f5230e41b130\"}",
+                "attempt": 2,
+                "created_at": "2026-10-31T06:20:08.000000Z",
+                "updated_at": "2026-11-03T08:12:27.000000Z"
+              },
+              {
+                "id": 2,
+                "workflow_id": "a31c7d8e-5eaf-4e20-a6b2-58fb067b5c0a",
+                "name": "Ricezione esito firma documento",
+                "step": 2,
+                "status": "SUCCESS",
+                "response_status": "{\"status\":\"SUCCESS\",\"documentId\":39}",
+                "attempt": 1,
+                "created_at": "2026-10-31T06:20:08.000000Z",
+                "updated_at": "2026-11-03T13:57:36.000000Z"
+              }
+            ]
+          }
+        },
+        {
+          "document_id": 40,
+          "property_id": 3,
+          "document_path": "u4QcZRv4vaVku0wsnDTExH2Jj4bu8eyfWfWrORee.pdf",
+          "document_label": "Riconoscimento provvigionale acquirente",
+          "document_is_digitally_signed": false,
+          "document_type": {
+            "document_type_id": 15,
+            "document_type_name": "Riconoscimento provvigionale acquirente",
+            "document_type_description": "Riconoscimento provvigionale acquirente",
+            "document_type_required": 1,
+            "document_type_context": "BUYER",
+            "document_type_contract_id": 1,
+            "document_type_esignature_enabled": true,
+            "document_type_esignature_workflow": "SignatureWorkflowBuyer"
+          },
+          "created_at": "2026-11-06T10:51:05.000000Z",
+          "signature_workflow": {
+            "id": "a328f0c1-1432-493f-948b-322f1c77db42",
+            "type": "App\\Workflows\\Signature\\SignatureWorkflowBuyer",
+            "status": "RUNNING",
+            "payload": "{\"documentId\":40,\"propertyId\":3,\"recipients\":[{\"name\":\"Gianni\",\"surname\":\"Ciccarelli\",\"email\":\"gianni.ciccarelli@gmail.com\",\"phone\":\"3488730465\"}],\"signers\":[]}",
+            "current_step": 1,
+            "current_step_attempt": 1,
+            "created_at": "2026-11-06T10:52:12.000000Z",
+            "updated_at": "2026-11-06T10:52:12.000000Z",
+            "steps": [
+              {
+                "id": 7,
+                "workflow_id": "a328f0c1-1432-493f-948b-322f1c77db42",
+                "name": "Preparazione e invio documento per firma",
+                "step": 1,
+                "status": "RUNNING",
+                "response_status": null,
+                "attempt": 1,
+                "created_at": "2026-11-06T10:52:12.000000Z",
+                "updated_at": "2026-11-06T10:52:12.000000Z"
+              },
+              {
+                "id": 8,
+                "workflow_id": "a328f0c1-1432-493f-948b-322f1c77db42",
+                "name": "Ricezione esito firma documento",
+                "step": 2,
+                "status": "PENDING",
+                "response_status": null,
+                "attempt": 0,
+  "created_at": "2026-11-06T10:52:12.000000Z",
+                "updated_at": "2026-11-06T10:52:12.000000Z"
+              }
+            ]
+          }
+        }
+      ],
+      "rental_type": null,
+      "rental_deposit": null,
+      "is_free": true,
+      "multiple_floors": false,
+      "bedrooms": null,
+      "tavern": false,
+      "parking_places_type": null,
+      "air_conditioning_type": null,
+      "builtin_wardrobe": false,
+      "swimming_pool": false,
+      "tennis_court": false,
+      "appointment_duration": 1800,
+      "appointment_management": "assisted",
+      "appointment_confirmation_management": null,
+      "seller_commission_collection_date": null,
+      "buyer_commission_collection_date": null,
+      "expected_collection_date": null
+    },
+    "phases": [
+      {
+        "recipients": [
+          {
+            "name": "Gianni",
+            "surname": "Ciccarelli",
+            "email": "gianni.ciccarelli@gmail.com",
+            "phone": "3488730465"
+          }
+        ],
+        "signers": [
+          {
+            "name": "Mario",
+            "surname": "Rossi",
+            "email": "gianni.ciccarelli@gmx.com",
+            "phone": "3488730465"
+          }
+        ]
+      }
+    ],
+    "document": "workflows/a328f06c-13a0-43a6-bbf9-465be074c23f/1/document.pdf"
+  },
+  "webhook_callback": "http://property.homepanda.locale/api/v1/webhook/workflow/a328f06c-13a0-43a6-bbf9-465be074c23f/1"
+}
