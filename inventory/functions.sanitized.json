@@ -1,7 +1,7 @@
 {
   "scope": "partial",
-  "note": "lambda-immobiliare-ads-handler, lambda-immobiliare-leads-handler, lambda-homepanda-whatsapp-bitrix-message, lambda-wikicasa-ads-handler, lambda-idealista-ads-handler, lambda-homepanda-esignature-create-envelope e lambda-homepanda-esignature-handle-signature. Non e l'inventario delle 30 funzioni. Le prime cinque sono state lette il 2026-10-27; le due esignature il 2026-11-06.",
-  "collectedAt": "2026-11-06",
+  "note": "lambda-immobiliare-ads-handler, lambda-immobiliare-leads-handler, lambda-homepanda-whatsapp-bitrix-message, lambda-wikicasa-ads-handler, lambda-idealista-ads-handler, lambda-homepanda-esignature-create-envelope, lambda-homepanda-esignature-handle-signature e lambda-immobiliare-ads-info. Non e l'inventario delle 30 funzioni. Le prime cinque sono state lette il 2026-10-27; le due esignature il 2026-11-06; ads-info il 2026-11-18.",
+  "collectedAt": "2026-11-18",
   "accountId": "247981707334",
   "region": "eu-central-1",
   "functions": [
@@ -418,6 +418,46 @@
       "tags": {},
       "tracingMode": "PassThrough",
       "snapStart": "None"
+    },
+    {
+      "functionName": "lambda-immobiliare-ads-info",
+      "functionArn": "arn:aws:lambda:eu-central-1:247981707334:function:lambda-immobiliare-ads-info",
+      "packageType": "Zip",
+      "runtime": "nodejs18.x",
+      "handler": "index.handler",
+      "architectures": [
+        "x86_64"
+      ],
+      "memorySize": 256,
+      "timeout": 300,
+      "ephemeralStorage": 512,
+      "codeSize": 4415558,
+      "codeSha256": "+dStjOmoha4+j6eoX2Y00HstuyqqRjdO0m/TOOcyT8U=",
+      "description": "",
+      "role": "arn:aws:iam::247981707334:role/service-role/lambda-immobiliare-ads-info-role-c44gz83n",
+      "layers": [],
+      "vpc": null,
+      "reservedConcurrency": null,
+      "version": "$LATEST",
+      "publishedVersionCount": 37,
+      "aliases": [],
+      "revisionId": "301d5d0e-0942-48ca-88f3-1d0bb3f8f485",
+      "lastModified": "2026-09-29T14:29:52.000+0000",
+      "state": "Active",
+      "lastUpdateStatus": "Successful",
+      "environmentVariableNames": [
+        "QUEUE_URL"
+      ],
+      "eventSourceMappings": [],
+      "resourcePolicy": null,
+      "eventInvokeConfig": null,
+      "logGroup": {
+        "name": "/aws/lambda/lambda-immobiliare-ads-info",
+        "retentionInDays": null
+      },
+      "tags": {},
+      "tracingMode": "PassThrough",
+      "snapStart": "None"
     }
   ],
   "unverified": [
@@ -429,6 +469,8 @@
     "Producer delle code ImmobiliareLeads, ImmobiliareFondoCasaLeads, ImmobiliareNewMessage, RelabImmobiliareLeads e RelabImmobiliareNewMessage non verificati.",
     "Policy IAM del ruolo di lambda-homepanda-whatsapp-bitrix-message non letta.",
     "La variabile SQS_WHATSAPP_OUTBOUND è usata nel sorgente di lambda-homepanda-whatsapp-bitrix-message ma non risulta in configurazione.",
-    "Policy IAM dei ruoli lambda-homepanda-esignature-create-envelope-role-0h1b659p e lambda-homepanda-esignature-handle-signature-role-jpopr6e2 non letta."
+    "Policy IAM dei ruoli lambda-homepanda-esignature-create-envelope-role-0h1b659p e lambda-homepanda-esignature-handle-signature-role-jpopr6e2 non letta.",
+    "Policy IAM del ruolo di lambda-immobiliare-ads-info non letta.",
+    "Il chiamante di lambda-immobiliare-ads-info non e stato individuato: nessun event source mapping, nessuna resource policy, nessuna regola EventBridge sul bus di default."
   ]
 }

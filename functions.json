@@ -205,6 +205,33 @@
         }
       },
       "environmentVariableNames": []
+    },
+    {
+      "logicalName": "immobiliare-ads-info",
+      "functionName": "lambda-immobiliare-ads-info",
+      "directory": "functions/lambda-immobiliare-ads-info",
+      "packageType": "Zip",
+      "runtime": "nodejs18.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "accountId": "247981707334",
+      "region": "eu-central-1",
+      "build": {
+        "script": "build.sh",
+        "sourceRoot": "src",
+        "strategy": "nodejs-zip-npm",
+        "artifact": "immobiliare-ads-info.zip",
+        "toolchain": {
+          "language": "nodejs",
+          "version": "18.20.8",
+          "packageManager": "npm",
+          "packageManagerVersion": "10.8.2",
+          "pinScope": "function"
+        }
+      },
+      "environmentVariableNames": [
+        "QUEUE_URL"
+      ]
     }
   ]
 }

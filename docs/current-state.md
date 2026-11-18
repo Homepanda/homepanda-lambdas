@@ -1,6 +1,6 @@
 # Stato attuale
 
-Aggiornato il 2026-11-06. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler`, `lambda-idealista-ads-handler`, `lambda-homepanda-esignature-create-envelope` e `lambda-homepanda-esignature-handle-signature`. Le altre Lambda non sono state inventariate.
+Aggiornato il 2026-11-18. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler`, `lambda-idealista-ads-handler`, `lambda-homepanda-esignature-create-envelope`, `lambda-homepanda-esignature-handle-signature` e `lambda-immobiliare-ads-info`. Le altre Lambda non sono state inventariate.
 
 ## Repository
 
@@ -178,3 +178,39 @@ In Git è entrato quel sorgente. È il blueprint della console: `handler` rispon
 | `lambda-homepanda-esignature-handle-signature` | `2026-11-06T13:26:35.701+0000` | `lambda-homepanda-esignature-handle-signature-role-jpopr6e2` |
 
 Runtime `nodejs24.x`, handler `index.handler`, architettura `x86_64`, memoria 128 MB, timeout 3 s. La build usa la strategia `nodejs-zip`: impacchetta solo `index.mjs`, senza installare dipendenze. Il pin di `node --check` è Node 24.11.0, lo stesso delle altre funzioni `nodejs24.x`. Lo zip ricostruito non è usato come prova di identicità con il pacchetto in produzione e non viene pubblicato.
+
+## lambda-immobiliare-ads-info
+
+Lettura con il profilo `default`, identità `arn:aws:iam::247981707334:user/user-deploy`, regione `eu-central-1`, il 2026-11-18. Nessuna scrittura. Lo zip distribuito è stato scaricato in memoria e il suo SHA-256 in base64 coincide con `CodeSha256` `+dStjOmoha4+j6eoX2Y00HstuyqqRjdO0m/TOOcyT8U=`.
+
+In Git è entrato il sorgente di quello zip, senza `node_modules`: `index.mjs`, `immobilare.mjs`, `stats.mjs`, `package.json`, `package-lock.json`. Lo zip contiene 1942 file, dipendenze comprese. `package.json` e `package-lock.json` coincidono con `/home/corrado/homepanda/project/lambda-immobiliare-ads-info`. `index.mjs` e `immobilare.mjs` no, e `stats.mjs` è solo nello zip. Quella cartella non è stata importata.
+
+| Campo | Valore |
+| --- | --- |
+| Nome | `lambda-immobiliare-ads-info` |
+| Account | `247981707334` |
+| Regione | `eu-central-1` |
+| PackageType | Zip |
+| Runtime | `nodejs18.x` |
+| Handler | `index.handler` |
+| Architettura | `x86_64` |
+| Memoria | 256 MB |
+| Timeout | 300 s |
+| Storage temporaneo | 512 MB |
+| Layer | nessuno |
+| Concorrenza riservata | assente |
+| Alias | nessuno |
+| Versioni pubblicate | 37, invocazione osservata su `$LATEST` |
+| VPC | assente |
+| Ruolo | `lambda-immobiliare-ads-info-role-c44gz83n` |
+| Log group | `/aws/lambda/lambda-immobiliare-ads-info`, retention non impostata |
+| Tag | nessuno |
+| Resource policy | assente |
+| Invocazione asincrona | assente |
+| Event source mapping | assente |
+| Function URL | assente |
+| Regole EventBridge sul bus di default | nessuna con questa funzione come target |
+
+Variabile d'ambiente presente, solo nome: `QUEUE_URL`. Il valore resta sulla funzione. `IMMOBILIARE_STATS_QUEUE_URL` e `IMMOBILIARE_STATS_LIMIT` arrivano da `event.detail`, non dalla configurazione.
+
+Il pin di build è Node 18.20.8 con npm 10.8.2, lo stesso Node di Wikicasa. L'API Lambda non espone la patch di `nodejs18.x`, quindi il pin non è quella patch. Lo zip ricostruito non è usato come prova di identicità con il pacchetto in produzione e non viene pubblicato.
