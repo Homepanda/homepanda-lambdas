@@ -103,7 +103,7 @@ export class Immobiliare {
           Referer: `${BASE_URL}/immobili/portale/${encodeURIComponent(propertyId)}/prestazioni`,
         },
       });
-      const { status, data } = response;
+      const { status, data } = response;    
 
       if (status === 429 || status === 503) {
         const delay = this.#retryAfterMs(response.headers?.['retry-after']) ?? RETRY_DELAYS_MS[attempt];
@@ -150,6 +150,19 @@ export class Immobiliare {
           status,
         );
       }
+
+      const propertyResponse = await this.#request({
+        method: 'get',
+        url: `${BASE_URL}/api/properties/${encodeURIComponent(propertyId)}`,        
+        headers: {
+          Accept: 'application/json',
+          Referer: `${BASE_URL}/immobili/portale/${encodeURIComponent(propertyId)}/prestazioni`,
+        },
+      });
+      const { data: dataProperty } = propertyResponse;
+
+      data.data['favorite'] = dataProperty.usersStats.saves;
+
       return data.data;
     }
   }
