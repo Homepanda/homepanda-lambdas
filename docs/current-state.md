@@ -213,4 +213,6 @@ In Git è entrato il sorgente di quello zip, senza `node_modules`: `index.mjs`, 
 
 Variabile d'ambiente presente, solo nome: `QUEUE_URL`. Il valore resta sulla funzione. `IMMOBILIARE_STATS_QUEUE_URL` e `IMMOBILIARE_STATS_LIMIT` arrivano da `event.detail`, non dalla configurazione.
 
-Il pin di build è Node 18.20.8 con npm 10.8.2, lo stesso Node di Wikicasa. L'API Lambda non espone la patch di `nodejs18.x`, quindi il pin non è quella patch. Lo zip ricostruito non è usato come prova di identicità con il pacchetto in produzione e non viene pubblicato.
+Il pin di build è Node 18.20.8 con npm 10.8.2, lo stesso Node di Wikicasa. L'API Lambda non espone la patch di `nodejs18.x`, quindi il pin non è quella patch. `npm ci --omit=dev` con npm 10.8.2 è riuscito e non ha modificato `package-lock.json`. `BUILD_TARGETS=immobiliare-ads-info bash scripts/build-selected.sh` ha prodotto `dist/immobiliare-ads-info.zip` con SHA-256 `48c5a65ce43ca2cdac531b42eb4336688e92804a9bb4a9e3d3c00ed50318f3e4`. Quell'hash non è il `CodeSha256` del pacchetto in AWS: lo zip ricostruito non è stato confrontato come identico a quello in produzione e non è stato pubblicato.
+
+`node --test functions/lambda-immobiliare-ads-info/tests/handler.test.mjs`: 1 test passato. Copre solo il ramo di `stats.mjs` in cui la coda stats non è impostata, senza login Immobiliare e senza SQS. Non è uno smoke test sulla funzione AWS.
