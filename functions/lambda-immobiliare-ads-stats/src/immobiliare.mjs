@@ -225,6 +225,7 @@ export function toDailyRecords(propertyId, adId, data, start, end, fetchedAt) {
     adId: Number(adId),
     date,
     metrics: Object.fromEntries(series.map(([metric, totalsByDate]) => [metric, totalsByDate.get(date) ?? 0])),
+    favorite: data.favorite ?? 0,
     performanceIndexes: data.performanceIndexes ?? null,
     fetchedAt,
   }));
