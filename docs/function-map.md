@@ -1,6 +1,6 @@
 # Mappa funzioni
 
-Inventario parziale: 8 funzioni mappate. Il conteggio di 30 non è stato verificato.
+Inventario parziale: 9 funzioni mappate. Il conteggio di 30 non è stato verificato.
 
 | Nome logico | Cartella | Funzione AWS | Account | Regione | Pacchetto |
 | --- | --- | --- | --- | --- | --- |
@@ -12,3 +12,4 @@ Inventario parziale: 8 funzioni mappate. Il conteggio di 30 non è stato verific
 | homepanda-esignature-create-envelope | `functions/lambda-homepanda-esignature-create-envelope` | `lambda-homepanda-esignature-create-envelope` | `247981707334` | `eu-central-1` | Zip |
 | homepanda-esignature-handle-signature | `functions/lambda-homepanda-esignature-handle-signature` | `lambda-homepanda-esignature-handle-signature` | `247981707334` | `eu-central-1` | Zip |
 | immobiliare-ads-info | `functions/lambda-immobiliare-ads-info` | `lambda-immobiliare-ads-info` | `247981707334` | `eu-central-1` | Zip |
+| immobiliare-ads-stats | `functions/lambda-immobiliare-ads-stats` | `lambda-immobiliare-ads-stats` | `247981707334` | `eu-central-1` | Zip |

@@ -232,6 +232,36 @@
       "environmentVariableNames": [
         "QUEUE_URL"
       ]
+    },
+    {
+      "logicalName": "immobiliare-ads-stats",
+      "functionName": "lambda-immobiliare-ads-stats",
+      "directory": "functions/lambda-immobiliare-ads-stats",
+      "packageType": "Zip",
+      "runtime": "nodejs24.x",
+      "handler": "index.handler",
+      "architecture": "x86_64",
+      "accountId": "247981707334",
+      "region": "eu-central-1",
+      "build": {
+        "script": "build.sh",
+        "sourceRoot": "src",
+        "strategy": "nodejs-zip-npm",
+        "artifact": "immobiliare-ads-stats.zip",
+        "toolchain": {
+          "language": "nodejs",
+          "version": "24.11.0",
+          "packageManager": "npm",
+          "packageManagerVersion": "11.6.1",
+          "pinScope": "function"
+        }
+      },
+      "environmentVariableNames": [
+        "ESM_UUID",
+        "QUEUE_URL",
+        "SECRET_ID",
+        "WORK_QUEUE_URL"
+      ]
     }
   ]
 }

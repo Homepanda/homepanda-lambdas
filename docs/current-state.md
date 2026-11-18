@@ -1,6 +1,6 @@
 # Stato attuale
 
-Aggiornato il 2026-11-18. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler`, `lambda-idealista-ads-handler`, `lambda-homepanda-esignature-create-envelope`, `lambda-homepanda-esignature-handle-signature` e `lambda-immobiliare-ads-info`. Le altre Lambda non sono state inventariate.
+Aggiornato il 2026-11-18. Ambito: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler`, `lambda-idealista-ads-handler`, `lambda-homepanda-esignature-create-envelope`, `lambda-homepanda-esignature-handle-signature`, `lambda-immobiliare-ads-info` e `lambda-immobiliare-ads-stats`. Le altre Lambda non sono state inventariate.
 
 ## Repository
 
@@ -216,3 +216,47 @@ Variabile d'ambiente presente, solo nome: `QUEUE_URL`. Il valore resta sulla fun
 Il pin di build è Node 18.20.8 con npm 10.8.2, lo stesso Node di Wikicasa. L'API Lambda non espone la patch di `nodejs18.x`, quindi il pin non è quella patch. `npm ci --omit=dev` con npm 10.8.2 è riuscito e non ha modificato `package-lock.json`. `BUILD_TARGETS=immobiliare-ads-info bash scripts/build-selected.sh` ha prodotto `dist/immobiliare-ads-info.zip` con SHA-256 `48c5a65ce43ca2cdac531b42eb4336688e92804a9bb4a9e3d3c00ed50318f3e4`. Quell'hash non è il `CodeSha256` del pacchetto in AWS: lo zip ricostruito non è stato confrontato come identico a quello in produzione e non è stato pubblicato.
 
 `node --test functions/lambda-immobiliare-ads-info/tests/handler.test.mjs`: 1 test passato. Copre solo il ramo di `stats.mjs` in cui la coda stats non è impostata, senza login Immobiliare e senza SQS. Non è uno smoke test sulla funzione AWS.
+
+## lambda-immobiliare-ads-stats
+
+Lettura con il profilo `default`, identità `arn:aws:iam::247981707334:user/user-deploy`, regione `eu-central-1`, il 2026-11-18. Nessuna scrittura. Lo zip distribuito è stato scaricato in memoria e il suo SHA-256 in base64 coincide con `CodeSha256` `Djg0mw7nce1kIgYlf/IRXPEB4/svJ8stLCBzSIhpizU=`.
+
+In Git è entrato il sorgente di quello zip, senza `node_modules`: `index.mjs`, `dispatcher.mjs`, `immobiliare.mjs`, `utils.mjs`, `worker.mjs`, `package.json`, `package-lock.json`. Lo zip contiene 2061 file, dipendenze comprese. Non esiste una cartella `project/lambda-immobiliare-ads-stats`.
+
+| Campo | Valore |
+| --- | --- |
+| Nome | `lambda-immobiliare-ads-stats` |
+| Account | `247981707334` |
+| Regione | `eu-central-1` |
+| PackageType | Zip |
+| Runtime | `nodejs24.x` |
+| Handler | `index.handler` |
+| Architettura | `x86_64` |
+| Memoria | 512 MB |
+| Timeout | 300 s |
+| Storage temporaneo | 512 MB |
+| Layer | nessuno |
+| Concorrenza riservata | assente |
+| Alias | nessuno |
+| Versioni pubblicate | 0, invocazione osservata su `$LATEST` |
+| VPC | assente |
+| Ruolo | `lambda-immobiliare-ads-stats-role-4qia7wtp` |
+| Log group | `/aws/lambda/lambda-immobiliare-ads-stats`, retention non impostata |
+| Tag | nessuno |
+| Resource policy | assente |
+| Invocazione asincrona | `MaximumRetryAttempts` 0, `MaximumEventAgeInSeconds` 21600, senza destinazioni, su `$LATEST` |
+| Function URL | assente |
+| Regole EventBridge sul bus di default | nessuna con questa funzione come target |
+
+Event source mapping abilitati, ARN della funzione senza qualificatore. Le code invocano `$LATEST`.
+
+| Coda | Batch |
+| --- | --- |
+| `immobiliare-stats-dispatch` | 1 |
+| `immobiliare-stats-work` | 25, finestra 1 s |
+
+Variabili d'ambiente presenti, solo nomi: `ESM_UUID`, `QUEUE_URL`, `SECRET_ID`, `WORK_QUEUE_URL`. I valori restano sulla funzione. `DELAY_DAYS`, `MAX_PROPERTIES` e `REQUEST_DELAY_MS` sono lette dal sorgente con default e non sono in configurazione.
+
+Il pin di build è Node 24.11.0 con npm 11.6.1. L'API Lambda non espone la patch di `nodejs24.x`, quindi il pin non è quella patch. `npm ci --omit=dev` con npm 11.6.1 è riuscito e non ha modificato `package-lock.json`. `BUILD_TARGETS=immobiliare-ads-stats bash scripts/build-selected.sh` ha prodotto `dist/immobiliare-ads-stats.zip` con SHA-256 `d01f07e97914031129bd78365f4a9d28d9f89d0259dc9b3bd072482b59c0eec9`. Quell'hash non è il `CodeSha256` del pacchetto in AWS: lo zip ricostruito non è stato confrontato come identico a quello in produzione e non è stato pubblicato.
+
+`node --test functions/lambda-immobiliare-ads-stats/tests/handler.test.mjs`: 1 test passato. Distingue un record della coda di dispatch da uno della coda di work, senza login Immobiliare, Secrets Manager o SQS. Non è uno smoke test sulla funzione AWS.

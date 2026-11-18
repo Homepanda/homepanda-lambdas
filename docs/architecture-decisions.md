@@ -1,6 +1,6 @@
 # Decisioni
 
-Ambito attuale: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler`, `lambda-idealista-ads-handler`, `lambda-homepanda-esignature-create-envelope`, `lambda-homepanda-esignature-handle-signature` e `lambda-immobiliare-ads-info`. Non c’è un pilota: Plan seleziona ogni cartella sotto `functions/` mappata in `functions.json`.
+Ambito attuale: `lambda-immobiliare-ads-handler`, `lambda-immobiliare-leads-handler`, `lambda-homepanda-whatsapp-bitrix-message`, `lambda-wikicasa-ads-handler`, `lambda-idealista-ads-handler`, `lambda-homepanda-esignature-create-envelope`, `lambda-homepanda-esignature-handle-signature`, `lambda-immobiliare-ads-info` e `lambda-immobiliare-ads-stats`. Non c’è un pilota: Plan seleziona ogni cartella sotto `functions/` mappata in `functions.json`.
 
 ## Repository
 
@@ -42,13 +42,17 @@ functions/lambda-immobiliare-ads-info/
   build.sh
   src/
   tests/
+functions/lambda-immobiliare-ads-stats/
+  build.sh
+  src/
+  tests/
 ```
 
 `functions.json` separa `logicalName` e `functionName`. Il nome AWS, l'account e la regione stanno nel manifest e non si deducono dalla cartella. Non contiene valori di ambiente.
 
 ## Build
 
-Un solo `buildspec.yml` in radice, senza `runtime-versions`. La build legge `release-targets.json` dello stage Plan; `BUILD_TARGETS` resta solo override manuale. Ogni funzione ha la propria ricetta in `build.sh` (Node 18.20.8 per Wikicasa e immobiliare-ads-info, Node 22.14.0 per ads e Idealista, Node 24.11.0 per leads, whatsapp-bitrix e le due funzioni esignature). Le strategie supportate sono `nodejs-zip-yarn-classic`, `nodejs-zip-npm` e `nodejs-zip`. `nodejs-zip` impacchetta i sorgenti senza `package.json` e senza installare dipendenze. I pin non sono condivisi. Python e container non sono implementati. Più target producono zip distinti e `dist/release-manifest.json` con `releases[]`.
+Un solo `buildspec.yml` in radice, senza `runtime-versions`. La build legge `release-targets.json` dello stage Plan; `BUILD_TARGETS` resta solo override manuale. Ogni funzione ha la propria ricetta in `build.sh` (Node 18.20.8 per Wikicasa e immobiliare-ads-info, Node 22.14.0 per ads e Idealista, Node 24.11.0 per leads, whatsapp-bitrix, le due funzioni esignature e immobiliare-ads-stats). Le strategie supportate sono `nodejs-zip-yarn-classic`, `nodejs-zip-npm` e `nodejs-zip`. `nodejs-zip` impacchetta i sorgenti senza `package.json` e senza installare dipendenze. I pin non sono condivisi. Python e container non sono implementati. Più target producono zip distinti e `dist/release-manifest.json` con `releases[]`.
 
 ## Codice di lambda-wikicasa-ads-handler
 
@@ -105,6 +109,14 @@ Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-09-29. `C
 `package.json` resta quello del pacchetto, con lockfile npm (`package-lock.json`). Il runtime atteso è `nodejs18.x`, l'handler `index.handler`, l'architettura `x86_64`. Il client SQS arriva dal runtime Lambda e non è una dipendenza di `package.json`.
 
 `node_modules` non entra in Git. Lo zip di build ha `index.mjs`, `immobilare.mjs` e `stats.mjs` alla radice.
+
+## Codice di lambda-immobiliare-ads-stats
+
+Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-09-29. `CodeSha256` letto da AWS, `Djg0mw7nce1kIgYlf/IRXPEB4/svJ8stLCBzSIhpizU=`, coincide con lo zip scaricato. Non esiste una cartella locale `project/lambda-immobiliare-ads-stats` da confrontare.
+
+`package.json` resta quello del pacchetto, con `"type": "module"` e lockfile npm (`package-lock.json`). Il runtime atteso è `nodejs24.x`, l'handler `index.handler`, l'architettura `x86_64`. I client AWS SDK arrivano dal runtime Lambda e non sono dipendenze di `package.json`.
+
+`node_modules` non entra in Git. Lo zip di build ha `index.mjs`, `dispatcher.mjs`, `immobiliare.mjs`, `utils.mjs` e `worker.mjs` alla radice.
 
 ## Deploy
 
