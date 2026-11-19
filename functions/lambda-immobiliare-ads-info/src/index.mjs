@@ -30,13 +30,11 @@ export const handler = async (event) => {
     event.detail.PASSWORD,
   );
   console.info('Crawler logged, try to download ads data');
-  const { listings } = await immobilare.downloadData();
-  const responseString = `Sent ${response.messages} out of ${data.length} messages correctly`;
+  const { listings } = await immobilare.downloadData();  
   await sendStats({
     listings,
     queueUrl: event.detail.IMMOBILIARE_STATS_QUEUE_URL,
     limit: event.detail.IMMOBILIARE_STATS_LIMIT,
     sendMessage: (params) => sqsClient.send(new SendMessageCommand(params)),
-  });
-  return responseString;
+  });  
 };
