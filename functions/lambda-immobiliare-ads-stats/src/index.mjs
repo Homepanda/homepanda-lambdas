@@ -1,6 +1,5 @@
 import { SQSClient, SendMessageBatchCommand } from '@aws-sdk/client-sqs';
 import { LambdaClient, UpdateEventSourceMappingCommand } from '@aws-sdk/client-lambda';
-import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 import { Immobiliare, createHttpClient } from './immobiliare.mjs';
 import { createDispatcher, dispatchRecords, isWorkQueueRecord } from './dispatcher.mjs';
 import { createWorker } from './worker.mjs';
@@ -35,21 +34,19 @@ function buildDispatcher() {
 }
 
 function buildWorker() {
-  const secretId = requiredEnv('SECRET_ID');
   const esmUuid = requiredEnv('ESM_UUID');
-  const lambda = new LambdaClient({});
-  const secrets = new SecretsManagerClient({});
+  const lambda = new LambdaClient({});  
   const throttle = createThrottle(numberEnv('REQUEST_DELAY_MS', 2000));
 
   return createWorker({
     sendMessageBatch,
     resultsQueueUrl: requiredEnv('QUEUE_URL'),
     disableTrigger: () => lambda.send(new UpdateEventSourceMappingCommand({ UUID: esmUuid, Enabled: false })),
-    loadCredentials: async () => {
-      const { SecretString } = await secrets.send(new GetSecretValueCommand({ SecretId: secretId }));
-      const credentials = JSON.parse(SecretString);
+    loadCredentials: async (company) => {
+      const name = company === 'RLB' ? 'SECRET_RLB' : 'SECRET_HP';
+      const credentials = JSON.parse(requiredEnv(name));
       if (!credentials.USERNAME || !credentials.PASSWORD) {
-        throw new Error(`Secret ${secretId} must contain USERNAME and PASSWORD`);
+        throw new Error(`${name} must contain USERNAME and PASSWORD`);
       }
       return credentials;
     },

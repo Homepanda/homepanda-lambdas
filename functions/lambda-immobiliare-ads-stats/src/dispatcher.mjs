@@ -5,6 +5,7 @@ const PROPERTY_ID_PATTERN = /^\d+$/;
 export function createDispatcher({ sendMessageBatch, workQueueUrl, delayDays, maxProperties, now = () => new Date() }) {
   return async function dispatch(event) {
     const detail = event?.detail ?? {};
+    const company = String(event?.eventSourceARN ?? '').split(':').pop().includes('rlb') ? 'RLB' : 'HP';  
     const { properties, invalid } = parseProperties(detail, maxProperties);
     const { start, end } = resolveDateRange(detail, delayDays, now());
 
@@ -24,7 +25,7 @@ export function createDispatcher({ sendMessageBatch, workQueueUrl, delayDays, ma
           QueueUrl: workQueueUrl,
           Entries: batch.map(({ propertyId, adId }, index) => ({
             Id: String(index),
-            MessageBody: JSON.stringify({ propertyId, adId, start, end }),
+            MessageBody: JSON.stringify({ propertyId, adId, start, end, company }),
           })),
         });
         queued += result.Successful?.length ?? 0;
@@ -54,7 +55,7 @@ export async function dispatchRecords(records, dispatch) {
   const batchItemFailures = [];
   for (const record of records) {
     try {
-      await dispatch(JSON.parse(record.body));
+      await dispatch({ ...JSON.parse(record.body), eventSourceARN: record.eventSourceARN });
     } catch (error) {
       console.error(`Dispatch message ${record.messageId} failed, returning it to the queue: ${error.message}`);
       batchItemFailures.push({ itemIdentifier: record.messageId });
