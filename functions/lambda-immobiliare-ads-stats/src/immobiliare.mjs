@@ -161,7 +161,7 @@ export class Immobiliare {
       });
       const { data: dataProperty } = propertyResponse;
 
-      data.data['favorite'] = dataProperty.usersStats.saves;
+      data.data['favorite'] = dataProperty.data.usersStats.saves;
 
       return data.data;
     }
