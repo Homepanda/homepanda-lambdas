@@ -162,6 +162,7 @@ export class Immobiliare {
       const { data: dataProperty } = propertyResponse;
 
       data.data['favorite'] = dataProperty.data.usersStats.saves;
+      data.data['visit'] = dataProperty.data.usersStats.views;
 
       return data.data;
     }
@@ -226,6 +227,7 @@ export function toDailyRecords(propertyId, adId, data, start, end, fetchedAt) {
     date,
     metrics: Object.fromEntries(series.map(([metric, totalsByDate]) => [metric, totalsByDate.get(date) ?? 0])),
     favorite: data.favorite ?? 0,
+    visit: data.visit ?? 0,
     performanceIndexes: data.performanceIndexes ?? null,
     fetchedAt,
   }));
