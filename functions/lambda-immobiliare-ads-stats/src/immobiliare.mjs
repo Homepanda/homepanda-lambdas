@@ -67,9 +67,7 @@ export class Immobiliare {
     if (signin.status === 403) {
       throw new ImmobiliareError('blocked', 'Signin page blocked (HTTP 403)', 403);
     }
-    const csrfToken = typeof signin.data === 'string'
-      ? cheerio.load(signin.data)('input[name=_csrf_token]').val()
-      : undefined;
+    const csrfToken = csrfTokenFromSignin(signin.data);
     if (!csrfToken) {
       console.warn(`CSRF token not found on signin page (HTTP ${signin.status}), logging in without it: ${bodySnippet(signin.data)}`);
     }
@@ -207,6 +205,22 @@ function dataDomeSignal(response) {
   const body = bodySnippet(response.data, 4000).toLowerCase();
   const marker = DATADOME_BODY_MARKERS.find((value) => body.includes(value));
   return marker ? `body ${marker}` : undefined;
+}
+
+function csrfTokenFromSignin(html) {
+  if (typeof html !== 'string') {
+    return undefined;
+  }
+  const raw = cheerio.load(html)('#auth-data').text();
+  if (!raw) {
+    return undefined;
+  }
+  try {
+    const token = JSON.parse(raw).csrfToken;
+    return typeof token === 'string' && token !== '' ? token : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function bodySnippet(data, max = BODY_SNIPPET_LENGTH) {
