@@ -1,0 +1,23 @@
+{
+  "name": "lambda-homepanda-esignature-handle-signature",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {},
+    "testMatch": [
+      "**/*.test.mjs"
+    ],
+    "moduleFileExtensions": [
+      "mjs",
+      "js",
+      "json"
+    ]
+  },
+  "devDependencies": {
+    "jest": "^30.5.2"
+  }
+}
