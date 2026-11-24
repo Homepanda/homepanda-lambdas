@@ -55,7 +55,8 @@ app.get('/refresh', async (c) => {
   return c.json({ 'error': 'Secret not found' });
 });
 app.post('/handler', async (c) => {
-  const { PLACEMENT, PLACEMENT_OPTIONS, event, data, auth } = await c.req.parseBody();
+  const body = await c.req.parseBody();
+  const { PLACEMENT, PLACEMENT_OPTIONS, event, data, auth } = body;
   if (PLACEMENT === 'SETTING_CONNECTOR') {
     const options = JSON.parse(PLACEMENT_OPTIONS);
     const line = Number(options.LINE);
@@ -69,38 +70,71 @@ app.post('/handler', async (c) => {
     );
   }
   if (event === 'ONIMCONNECTORMESSAGEADD') {
-    console.log(event, data, auth);
-    for (const msg of data.MESSAGES) {
-      const externalChannel = msg.chat.id;
-      const conversation = await db.bitrixConversations.findByExternalChannel(externalChannel);
-      if (conversation) {
-        await sqs.sendMessage({
-          QueueUrl: process.env.SQS_WHATSAPP_OUTBOUND,
-          MessageBody: JSON.stringify({
-            clientMessageId: uuidv7(),
-            toPhone: conversation.contactPhone,
-            conversationId: conversation.conversationId,
-            origin: 'bitrix24',
-            agentRef: String(msg.message.user_id),
-            payload: {
-              kind: 'text',
-              body: msg.message.text
+    const connector = body['data[CONNECTOR]'];
+    const line = body['data[LINE]'];
+    for (let i = 0; body[`data[MESSAGES][${i}][im][message_id]`]; i++) {
+      const imChatId = body[`data[MESSAGES][${i}][im][chat_id]`];
+      const messageId = body[`data[MESSAGES][${i}][im][message_id]`];
+      const userId = body[`data[MESSAGES][${i}][message][user_id]`];
+      const text = (body[`data[MESSAGES][${i}][message][text]`] ?? '').replace(/^\[b\][^[\]]*:\s*\[\/b\]\s*\[br\]\s*/i, '');
+      const externalChatId = body[`data[MESSAGES][${i}][chat][id]`];
+      const fileLink = body[`data[MESSAGES][${i}][message][files][0][link]`];
+      const fileName = body[`data[MESSAGES][${i}][message][files][0][name]`];
+      try {
+        const conversation = await findConversationByChatId(imChatId);
+        let payload = { kind: 'text', body: text };
+        if (fileLink) {
+          const fileResponse = await fetch(fileLink);
+          if (!fileResponse.ok) {
+            throw new Error(`Impossibile scaricare il file da Bitrix: ${fileResponse.statusText}`);
+          }
+          const contentType = fileResponse.headers.get('content-type')
+            || body[`data[MESSAGES][${i}][message][files][0][type]`]
+            || 'application/octet-stream';
+          const s3Key = buildOutboundS3Key(conversation.conversationId, messageId);
+          await new Upload({
+            client: new S3Client({}),
+            params: {
+              Bucket: MEDIA_BUCKET,
+              Key: s3Key,
+              Body: fileResponse.body,
+              ContentType: contentType
             }
+          }).done();
+          payload = {
+            kind: 'media',
+            mediaType: 'document',
+            s3Key,
+            caption: text
+          };
+          if (contentType.startsWith('image/')) payload.mediaType = 'image';
+          else if (contentType.startsWith('audio/')) payload.mediaType = 'audio';
+          else if (contentType.startsWith('video/')) payload.mediaType = 'video';
+          else payload.filename = fileName;
+        }
+        await sqsClient.send(
+          new SendMessageCommand({
+            QueueUrl: SQS_QUEUE_URL,
+            MessageBody: JSON.stringify({
+              clientMessageId: messageId,
+              toPhone: conversation.toPhone,
+              waPhoneNumberId: conversation.waPhoneNumberId,
+              origin: 'bitrix24',
+              agentRef: `agent-${userId}`,
+              payload
+            }),
+            MessageGroupId: conversation.toPhone,
+            MessageDeduplicationId: messageId,
           }),
-          MessageGroupId: conversation.contactPhone,
-          MessageDeduplicationId: `bitrix:${msg.im.message_id}`
-        });
+        );
+        await setDeliveryStatus(connector, line, [{
+          im: { chat_id: imChatId, message_id: messageId },
+          message: { id: [messageId] },
+          chat: { id: externalChatId }
+        }]);
+      } catch (error) {
+        console.error(JSON.stringify({ msg: 'connector message failed', messageId, error: String(error) }));
       }
-      const message = [{
-        im: msg.im,
-        message: {
-          id: [`ext-msg-${uuidv7()}`],
-          date: Math.floor(Date.now() / 1000)
-        },
-        chat: msg.chat
-      }];
-
-      await setDeliveryStatus('homepanda_whatsapp_connector', data.LINE, message);
     }
   }
   if (event === 'ONIMCONNECTORDIALOGSTART') {
