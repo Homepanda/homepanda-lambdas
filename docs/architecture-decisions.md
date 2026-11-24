@@ -70,7 +70,7 @@ Si versiona il sorgente ESM estratto dal pacchetto distribuito il 2026-10-12. `C
 
 Si versiona il sorgente estratto dai pacchetti distribuiti il 2026-11-06. I due zip sono identici. `CodeSha256` letto da AWS, `b3QWX8x/00A4HrIdVuuueY7EqOUAvTtgddGRSSbMx2w=`, coincide con entrambi gli zip scaricati.
 
-Il pacchetto contiene solo `index.mjs`, il blueprint della console. Non si aggiunge un `package.json` che in AWS non c'è. Runtime atteso `nodejs24.x`, handler `index.handler`, architettura `x86_64`. La ricetta `nodejs-zip` produce uno zip con solo `index.mjs`.
+Il pacchetto letto da AWS il 2026-11-06 conteneva solo `index.mjs`, il blueprint della console. Il sorgente attuale è l'handler con `helpers/` e `services/`. Runtime atteso `nodejs24.x`, handler `index.handler`, architettura `x86_64`. La ricetta `nodejs-zip` mette `index.mjs`, `helpers/` e `services/` alla radice dello zip, senza `package.json` e senza installare dipendenze. `@aws-sdk/client-s3`, usato da create-envelope, arriva dal runtime Lambda.
 
 ## Codice di questa funzione
 

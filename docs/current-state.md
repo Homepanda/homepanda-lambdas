@@ -177,7 +177,7 @@ In Git è entrato quel sorgente. È il blueprint della console: `handler` rispon
 | `lambda-homepanda-esignature-create-envelope` | `2026-11-06T13:24:42.465+0000` | `lambda-homepanda-esignature-create-envelope-role-0h1b659p` |
 | `lambda-homepanda-esignature-handle-signature` | `2026-11-06T13:26:35.701+0000` | `lambda-homepanda-esignature-handle-signature-role-jpopr6e2` |
 
-Runtime `nodejs24.x`, handler `index.handler`, architettura `x86_64`, memoria 128 MB, timeout 3 s. La build usa la strategia `nodejs-zip`: impacchetta solo `index.mjs`, senza installare dipendenze. Il pin di `node --check` è Node 24.11.0, lo stesso delle altre funzioni `nodejs24.x`. Lo zip ricostruito non è usato come prova di identicità con il pacchetto in produzione e non viene pubblicato.
+Runtime `nodejs24.x`, handler `index.handler`, architettura `x86_64`, memoria 128 MB, timeout 3 s. La build usa la strategia `nodejs-zip`: impacchetta `index.mjs`, `helpers/` e `services/` alla radice, senza installare dipendenze. Il client S3 di create-envelope arriva dal runtime. Il pin di `node --check` è Node 24.11.0, lo stesso delle altre funzioni `nodejs24.x`. Lo zip ricostruito non è usato come prova di identicità con il pacchetto in produzione e non viene pubblicato.
 
 ## lambda-immobiliare-ads-info
 

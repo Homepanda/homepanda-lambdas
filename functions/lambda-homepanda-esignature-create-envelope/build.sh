@@ -38,10 +38,21 @@ for tool in curl tar zip sha256sum python3; do
 done
 
 src=$FUNCTION_SOURCE_ROOT
-if [[ ! -f "$src/index.mjs" ]]; then
-  echo "File sorgente mancante: index.mjs" >&2
-  exit 1
-fi
+for relative in \
+  index.mjs \
+  helpers/activities.mjs \
+  helpers/callback.mjs \
+  helpers/config.mjs \
+  helpers/errors.mjs \
+  services/documents.mjs \
+  services/esaw.mjs \
+  services/webhook.mjs
+do
+  if [[ ! -f "$src/$relative" ]]; then
+    echo "File sorgente mancante: $relative" >&2
+    exit 1
+  fi
+done
 
 source_fingerprint() {
   find "$1" -type f -printf '%P\n' | sort | while IFS= read -r relative; do
@@ -55,7 +66,10 @@ stage=$(mktemp -d /tmp/hp-lambda-stage.XXXXXX)
 cleanup() { rm -rf "$toolchain" "$stage"; }
 trap cleanup EXIT
 
+mkdir -p "$stage/helpers" "$stage/services"
 cp -a "$src/index.mjs" "$stage/"
+cp -a "$src/helpers/." "$stage/helpers/"
+cp -a "$src/services/." "$stage/services/"
 
 NODE_SHA256=b3c071cdf47aab867c3b2aa287257df12ec5d7c962bf922b32fd33226c4295fd
 NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz"
@@ -79,11 +93,13 @@ if [[ "$node_version" != "v${NODE_VERSION}" || -z "$npm_version" ]]; then
 fi
 echo "Toolchain: node ${node_version}, npm ${npm_version}"
 
-"$node_bin" --check "$stage/index.mjs"
+while IFS= read -r file; do
+  "$node_bin" --check "$file"
+done < <(find "$stage" -name '*.mjs' | sort)
 
 (
   cd "$stage"
-  zip -qr -X "$toolchain/package.zip" index.mjs
+  zip -qr -X "$toolchain/package.zip" . -x '*.DS_Store'
 )
 
 python3 - "$toolchain/package.zip" << 'PY'
@@ -92,8 +108,25 @@ import zipfile
 
 archive = zipfile.ZipFile(sys.argv[1])
 names = archive.namelist()
-if names != ["index.mjs"]:
-    raise SystemExit(f"Pacchetto non valido. contenuto={names}")
+required = [
+    "index.mjs",
+    "helpers/activities.mjs",
+    "helpers/callback.mjs",
+    "helpers/config.mjs",
+    "helpers/errors.mjs",
+    "services/documents.mjs",
+    "services/esaw.mjs",
+    "services/webhook.mjs",
+]
+missing = [name for name in required if name not in names]
+allowed_top = {"index.mjs", "helpers", "services"}
+unexpected = sorted({
+    name.split("/", 1)[0]
+    for name in names
+    if name.split("/", 1)[0] not in allowed_top
+})
+if missing or unexpected:
+    raise SystemExit(f"Pacchetto non valido. mancanti={missing} inattesi={unexpected}")
 PY
 
 mkdir -p "$DIST_DIR/manifests"
