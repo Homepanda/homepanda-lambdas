@@ -7,7 +7,7 @@ import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { connectorActivate, refreshToken, retrieveFile, setDeliveryStatus } from './lib/bitrix.mjs';
 import { getSecret, updateSecret } from './lib/secretManager.mjs';
 import { findConversationByChatId, HttpError } from './lib/homepanda.mjs';
-import { buildOutboundS3Key } from './lib/helper.mjs';
+import { bitrixMessageUuid, buildOutboundS3Key } from './lib/helper.mjs';
 
 const sqsClient = new SQSClient({});
 const SQS_QUEUE_URL = process.env.SQS_QUEUE_URL;
@@ -72,6 +72,7 @@ app.post('/handler', async (c) => {
   if (event === 'ONIMCONNECTORMESSAGEADD') {
     const connector = body['data[CONNECTOR]'];
     const line = body['data[LINE]'];
+    const accessToken = body['auth[access_token]'];
     for (let i = 0; body[`data[MESSAGES][${i}][im][message_id]`]; i++) {
       const imChatId = body[`data[MESSAGES][${i}][im][chat_id]`];
       const messageId = body[`data[MESSAGES][${i}][im][message_id]`];
@@ -82,6 +83,9 @@ app.post('/handler', async (c) => {
       const fileName = body[`data[MESSAGES][${i}][message][files][0][name]`];
       try {
         const conversation = await findConversationByChatId(imChatId);
+        const clientMessageId = bitrixMessageUuid(messageId);
+        const requestedAt = new Date(Number(body.ts) * 1000).toISOString();
+        const crmEntityId = Number(String(conversation.entityId ?? '').replace(/\D/g, ''));
         let payload = { kind: 'text', body: text };
         if (fileLink) {
           const fileResponse = await fetch(fileLink);
@@ -91,7 +95,7 @@ app.post('/handler', async (c) => {
           const contentType = fileResponse.headers.get('content-type')
             || body[`data[MESSAGES][${i}][message][files][0][type]`]
             || 'application/octet-stream';
-          const s3Key = buildOutboundS3Key(conversation.conversationId, messageId);
+          const s3Key = buildOutboundS3Key(conversation.conversationId, clientMessageId);
           await new Upload({
             client: new S3Client({}),
             params: {
@@ -116,11 +120,17 @@ app.post('/handler', async (c) => {
           new SendMessageCommand({
             QueueUrl: SQS_QUEUE_URL,
             MessageBody: JSON.stringify({
-              clientMessageId: messageId,
+              clientMessageId,
               toPhone: conversation.toPhone,
               waPhoneNumberId: conversation.waPhoneNumberId,
               origin: 'bitrix24',
               agentRef: `agent-${userId}`,
+              requestedAt,
+              bitrix: {
+                chatId: imChatId,
+                crmEntityType: conversation.entityType,
+                ...(Number.isInteger(crmEntityId) && crmEntityId > 0 ? { crmEntityId } : {})
+              },
               payload
             }),
             MessageGroupId: conversation.toPhone,
@@ -131,7 +141,7 @@ app.post('/handler', async (c) => {
           im: { chat_id: imChatId, message_id: messageId },
           message: { id: [messageId] },
           chat: { id: externalChatId }
-        }]);
+        }], accessToken);
       } catch (error) {
         console.error(JSON.stringify({ msg: 'connector message failed', messageId, error: String(error) }));
       }

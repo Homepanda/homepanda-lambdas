@@ -81,15 +81,14 @@ export async function setConnector(connectorName, connectorLine, connectorData) 
   return response;
 }
 
-export async function setDeliveryStatus(connectorName, connectorLine, messages) {
-  const authData = await getSecret();
+export async function setDeliveryStatus(connectorName, connectorLine, messages, accessToken) {  
   const data = {
-    auth: authData.access_token,
+    auth: accessToken,
     CONNECTOR: connectorName,
     LINE: connectorLine,
     MESSAGES: messages
   }
-  const response = await makeRequest('POST', `${BITRIX_URL}/rest/bitrix.imconnector.send.status.delivery`, JSON.stringify(data));
+  const response = await makeRequest('POST', `${BITRIX_URL}/rest/imconnector.send.status.delivery`, JSON.stringify(data));
   return response;
 }
 export async function retrieveFile(botId, fileId) {  
